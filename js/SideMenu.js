@@ -1,28 +1,30 @@
 /*!
- * SideMenu.js v0.0.1 (beta) ~ Copyright (c) 2013 
+ * SideMenu.js v0.0.1 (beta) ~ Copyright (c) 2013
  * Oscar Sobrevilla oscar.sobrevilla@gmai.com
  * Released under MIT license
  */
-
-
 (function ($) {
 
-  if (!Object.create) {
-    Object.create = (function(){
-        function F(){}
-
-        return function(o){
-            if (arguments.length != 1) {
-                throw new Error('Object.create implementation only accepts one parameter.');
-            }
-            F.prototype = o
-            return new F()
+  // Object.create Polyfill
+  if (!Object.create) { 
+    Object.create = (function () {
+      function F() {}
+      return function (o) {
+        if (arguments.length != 1) {
+          throw new Error('Object.create implementation only accepts one parameter.');
         }
+        F.prototype = o
+        return new F()
+      }
     })()
-}
+  }
+
+
+
   /*
    * Class SideMenu
    */
+
   SideMenu = function (items, options) {
     var that = this,
       p;
@@ -61,13 +63,13 @@
       this.items.push(menuItem);
       this._list.appendChild(menuItem.el);
     },
-    setParent: function(obj){
+    setParent: function (obj) {
       this.parent = obj;
     },
     open: function () {
-      (function(obj){
+      (function (obj) {
         if (obj) {
-          if (obj instanceof SideMenu){
+          if (obj instanceof SideMenu) {
             obj.open();
             return;
           }
@@ -78,9 +80,9 @@
       this._el.addClass('sm-open');
     },
     close: function () {
-      (function(items){
+      (function (items) {
         for (var i in items) {
-          if ( items[i].subMenu instanceof SideMenu) {
+          if (items[i].subMenu instanceof SideMenu) {
             items[i].subMenu.close();
             arguments.callee(items[i].subMenu.items);
           }
@@ -98,28 +100,36 @@
       back: 'Back'
     }
   });
+
+
+
   /*
    * Class SideMainMenu
    */
+
   SideMainMenu = function (list, options) {
     options.back = '';
     SideMenu.apply(this, arguments);
     this.currentMenu = this;
   };
   SideMainMenu.prototype = Object.create(SideMenu.prototype);
-  $.extend(SideMainMenu.prototype,{
+  $.extend(SideMainMenu.prototype, {
     constructor: SideMainMenu,
     appendTo: function (target) {
       $(target).append(this._el).append(this._el.find('.sm-submenu'));
       return this;
     },
-    close: function(){
+    close: function () {
       SideMenu.prototype.close.call(this);
     }
   });
+
+
+
   /*
    * Class SideSubMenu
    */
+
   SideSubMenu = function (items, options) {
     SideMenu.apply(this, arguments);
     this._el.addClass('sm-submenu');
@@ -131,9 +141,13 @@
       this.menu.append(this._el.find('.sm-submenu'));
     }
   });
+
+
+
   /*
    * Class SideMenuItem
    */
+
   SideMenuItem = function (title, options) {
     var that = this,
       p;
@@ -164,9 +178,13 @@
       this.parent = menuList;
     }
   });
+
+
+
   /*
    * Class SideMenuListItem
    */
+
   SideMenuListItem = function (title, list, cls) {
     var that = this;
     SideMenuItem.call(this, title);
@@ -190,9 +208,13 @@
       return this;
     }
   });
+
+
+
   /*
    * Class SideMenuItemLink
    */
+
   SideMenuItemLink = function (title, url) {
     SideMenuItem.call(this, title, {
       url: url
@@ -203,9 +225,14 @@
   $.extend(SideMenuItemLink.prototype, {
     constructor: SideMenuItemLink
   });
+
+
+
+
   /*
    * Class SideMenuItemButton
    */
+
   SideMenuItemButton = function (title, callback) {
     var that = this;
     SideMenuItem.call(this, title);
