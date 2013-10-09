@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Aside Menu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi">
+    <link rel="stylesheet" type="text/css" href="css/site.css" media="all" />
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/SideMenu.js"></script>
+    <script type="text/javascript">
+        $(function(){
+
+            SideMenu.options.back = "◀";
+            
+
+            shareListItem = new SideMenuListItem("Compartir")
+              .addSubMenu([
+                new SideMenuItem("Facebook", {
+                  url: "http://facebook.com",
+                  cls: "fb"
+                }),
+                new SideMenuItem("Twitter", {
+                  url: "http://twitter.com",
+                  cls: "tw"
+                }),
+                new SideMenuItem("Google+", {
+                  url: "http://youtube.com/share",
+                  cls: "gg"
+                }),
+                new SideMenuItem("Pinterest", {
+                  url: "http://pinteres.com/share",
+                  cls: "pin"
+                })
+              ], {
+                title: "Compartir en:"
+              });
+
+            editionsListItem = new SideMenuListItem("Ediciones")
+              .addSubMenu([
+                new SideMenuItemLink("Cuerpo A"),
+                new SideMenuItemLink("DT"),
+                new SideMenuItemLink("Economia"),
+                new SideMenuItemLink("Luces"),
+                new SideMenuItemLink("Suplemento 1"),
+                new SideMenuListItem("Mundo").addSubMenu([
+                  new SideMenuItemLink("Estados Unidos"),
+                  new SideMenuItemLink("Europa"),
+                  new SideMenuItemLink("America Latina"),
+                  new SideMenuItemLink("Perú"),
+                  new SideMenuItemLink("Colombia"),
+                  new SideMenuItemLink("Chile"),
+                  new SideMenuItemLink("Argentina")
+                ], {
+                  title: "Actualidad"
+                })
+              ], {
+                title: "Ediciones de hoy"
+              });
+
+
+            sideMainMenu = new SideMainMenu([
+              shareListItem,
+              editionsListItem,
+              new SideMenuItem("Descargar página PDF"),
+              new SideMenuItemButton("Salir", function () {
+                alert("Se presionó el botón SALIR");
+              })
+            ], {
+              title: "Opciones"
+            }).appendTo('#menu');
+
+            $("body").on('click', function(e){
+              e.target === document.body && sideMainMenu.close();
+            })
+        });
+        
+    </script>
+</head>
+<body>
+    <button onclick="sideMainMenu.toggle();">Open</button>
+    <div id="menu" class="sm-main"></div>
+</body>
+</html>
