@@ -6,6 +6,20 @@
 
 
 (function ($) {
+
+  if (!Object.create) {
+    Object.create = (function(){
+        function F(){}
+
+        return function(o){
+            if (arguments.length != 1) {
+                throw new Error('Object.create implementation only accepts one parameter.');
+            }
+            F.prototype = o
+            return new F()
+        }
+    })()
+}
   /*
    * Class SideMenu
    */
@@ -41,17 +55,37 @@
     this.isOpen = false;
     this.parent = null;
   };
-  $.extend(SideMenu.prototype, {
+  SideMenu.prototype = Object.create({
     addItem: function (menuItem) {
       menuItem.setParent(this);
       this.items.push(menuItem);
       this._list.appendChild(menuItem.el);
     },
+    setParent: function(obj){
+      this.parent = obj;
+    },
     open: function () {
+      (function(obj){
+        if (obj) {
+          if (obj instanceof SideMenu){
+            obj.open();
+            return;
+          }
+          arguments.callee(obj.parent);
+        }
+      }(this.parent));
       this.isOpen = true;
       this._el.addClass('sm-open');
     },
     close: function () {
+      (function(items){
+        for (var i in items) {
+          if ( items[i].subMenu instanceof SideMenu) {
+            items[i].subMenu.close();
+            arguments.callee(items[i].subMenu.items);
+          }
+        }
+      }(this.items));
       this.isOpen = false;
       this._el.removeClass('sm-open');
     },
@@ -70,12 +104,17 @@
   SideMainMenu = function (list, options) {
     options.back = '';
     SideMenu.apply(this, arguments);
+    this.currentMenu = this;
   };
-  $.extend(SideMainMenu.prototype, SideMenu.prototype, {
+  SideMainMenu.prototype = Object.create(SideMenu.prototype);
+  $.extend(SideMainMenu.prototype,{
     constructor: SideMainMenu,
     appendTo: function (target) {
       $(target).append(this._el).append(this._el.find('.sm-submenu'));
       return this;
+    },
+    close: function(){
+      SideMenu.prototype.close.call(this);
     }
   });
   /*
@@ -85,7 +124,8 @@
     SideMenu.apply(this, arguments);
     this._el.addClass('sm-submenu');
   }
-  $.extend(SideSubMenu.prototype, SideMenu.prototype, {
+  SideSubMenu.prototype = Object.create(SideMenu.prototype);
+  $.extend(SideSubMenu.prototype, {
     constructor: SideSubMenu,
     refresh: function () {
       this.menu.append(this._el.find('.sm-submenu'));
@@ -140,10 +180,12 @@
       })
     this.subMenu = null;
   };
-  $.extend(SideMenuListItem.prototype, SideMenuItem.prototype, {
+  SideMenuListItem.prototype = Object.create(SideMenuItem.prototype);
+  $.extend(SideMenuListItem.prototype, {
     constructor: SideMenuListItem,
     addSubMenu: function (subMenu, options) {
       this.subMenu = new SideSubMenu(subMenu, options);
+      this.subMenu.setParent(this)
       this._el.append(this.subMenu.el);
       return this;
     }
@@ -157,7 +199,8 @@
     });
     this._el.addClass('sm-item-link');
   };
-  $.extend(SideMenuItemLink.prototype, SideMenuItem.prototype, {
+  SideMenuItemLink.prototype = Object.create(SideMenuItem.prototype);
+  $.extend(SideMenuItemLink.prototype, {
     constructor: SideMenuItemLink
   });
   /*
@@ -171,7 +214,8 @@
       callback && callback.call(this, e, that);
     });
   };
-  $.extend(SideMenuItemButton.prototype, SideMenuItem.prototype, {
+  SideMenuItemButton.prototype = Object.create(SideMenuItem.prototype);
+  $.extend(SideMenuItemButton.prototype, {
     constructor: SideMenuItemButton
   });
 }(jQuery));
