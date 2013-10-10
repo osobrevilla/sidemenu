@@ -19,10 +19,8 @@
   
 
   // Scroll Handler for mobile devices
-  var touchScroll = function (id) {
-    if (!isTouch) {
-      return
-    }
+  var touchScroll = (function (id) {
+    if (!isTouch) { return }
     var pos = 0;
     $(id).on("touchstart", function (event) {
       var e = event.originalEvent;
@@ -32,13 +30,13 @@
       this.scrollTop = pos - e.touches[0].pageY;
       e.preventDefault();
     });
-  };
+  });
 
-  /*
+  /**
    * Class SideMenu
    */
 
-  SideMenu = function (items, options) {
+  SideMenu = (function (items, options) {
     var that = this,
       p;
     this.options = $.extend({}, SideMenu.options, options);
@@ -67,11 +65,12 @@
       this._el.prepend(
         $('<div/>')
         .addClass('sm-title')
-        .text(this.options.title)
+        .text(this.title = this.options.title)
       );
     this.isOpen = false;
     this.parent = null;
-  };
+  });
+
   SideMenu.prototype = Object.create({
     addItem: function (menuItem) {
       menuItem.setParent(this);
@@ -108,6 +107,21 @@
     },
     toggle: function () {
       this[this.isOpen ? 'close' : 'open']();
+    },
+    getItemByIndex: function(index){
+      return this.items[index];
+    },
+    getItemByName: function(title){
+      var i, reg = new RegExp(title, "gi");
+      for (i in this.items) {
+        if ( this.items[i].title && reg.test(this.items[i].title) )
+          return this.items[i];
+      }
+      return null;
+    },
+    getSubMenuByName: function(title){
+      var item = this.getItemByName(title);
+      return item ? item.subMenu : item;
     }
   });
   $.extend(SideMenu, {
@@ -118,16 +132,17 @@
 
 
 
-  /*
+  /**
    * Class SideMainMenu
    */
 
-  SideMainMenu = function (list, options) {
+  SideMainMenu = (function (list, options) {
     options = options || {};
     options.back = "";
     SideMenu.call(this, list, options);
     this.currentMenu = this;
-  };
+  });
+
   SideMainMenu.prototype = Object.create(SideMenu.prototype);
   $.extend(SideMainMenu.prototype, {
     constructor: SideMainMenu,
@@ -142,14 +157,15 @@
 
 
 
-  /*
+  /**
    * Class SideSubMenu
    */
 
-  SideSubMenu = function (items, options) {
+  SideSubMenu = (function (items, options) {
     SideMenu.apply(this, arguments);
     this._el.addClass('sm-submenu');
-  }
+  });
+
   SideSubMenu.prototype = Object.create(SideMenu.prototype);
   $.extend(SideSubMenu.prototype, {
     constructor: SideSubMenu,
@@ -160,11 +176,11 @@
 
 
 
-  /*
+  /**
    * Class SideMenuItem
    */
 
-  SideMenuItem = function (title, options) {
+  SideMenuItem = (function (title, options) {
     var that = this,
       p;
     this.options = {};
@@ -183,14 +199,14 @@
       .addClass('sm-item-title')
       .addClass(this.options.cls)
       .append($('<span class="sm-item-icon"/>'))
-      .append($('<span class="sm-item-text"/>').text(title))
+      .append($('<span class="sm-item-text"/>').text(this.title = title))
       .appendTo(this._el);
 
     if (this.options.cls)
       this._button.addClass(this.options.cls);
     this.el = this._el.get(0);
     this.parent = null;
-  };
+  });
   $.extend(SideMenuItem.prototype, {
     constructor: SideMenuItem,
     setParent: function (menuList) {
@@ -200,11 +216,11 @@
 
 
 
-  /*
+  /**
    * Class SideMenuListItem
    */
 
-  SideMenuListItem = function (title, subMenu, cls) {
+  SideMenuListItem = (function (title, subMenu, cls) {
     var that = this;
     SideMenuItem.call(this, title, {
       cls: cls
@@ -221,49 +237,52 @@
     });
     this.subMenu.setParent(this)
     this._el.append(this.subMenu.el);
-  };
+  });
+
   SideMenuListItem.prototype = Object.create(SideMenuItem.prototype);
   SideMenuListItem.prototype.constructor = SideMenuListItem;
 
 
 
-  /*
+  /**
    * Class SideMenuItemLink
    */
 
-  SideMenuItemLink = function (title, url) {
+  SideMenuItemLink = (function (title, url) {
     SideMenuItem.call(this, title, {
       url: url
     });
     this._el.addClass('sm-item-link');
-  };
+  });
+
   SideMenuItemLink.prototype = Object.create(SideMenuItem.prototype);
   SideMenuItemLink.prototype.constructor = SideMenuItemLink;
 
 
 
-  /*
+  /**
    * Class SideMenuItemButton
    */
 
-  SideMenuItemButton = function (title, callback, options) {
+  SideMenuItemButton = (function (title, callback, options) {
     var that = this;
     SideMenuItem.call(this, title, options);
     this._el.addClass('sm-item-button');
     this._el.on('click', function (e) {
       callback && callback.call(this, e, that);
     });
-  };
+  });
+
   SideMenuItemButton.prototype = Object.create(SideMenuItem.prototype);
   SideMenuItemButton.prototype.constructor = SideMenuItemButton;
 
 
 
-  /*
+  /**
    * Class SideMenuSingleItem
    */
 
-  SideMenuUserAccountItem = function (name, urlphoto) {
+  SideMenuUserAccountItem = (function (name, urlphoto) {
     var that = this;
     this._el = $('<div/>');
     this.el = this._el.get(0);
@@ -278,7 +297,7 @@
       .addClass('sm-useraccount-name')
       .text(name)
     )
-  };
+  });
   SideMenuUserAccountItem.prototype = Object.create(SideMenuItem.prototype);
   SideMenuUserAccountItem.prototype.constructor = SideMenuUserAccountItem;
 
