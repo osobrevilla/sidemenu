@@ -1,6 +1,6 @@
 /*!
  * SideMenu.js v0.0.1 (beta) ~ Copyright (c) 2013
- * Oscar Sobrevilla oscar.sobrevilla@gmai.com
+ * Oscar Sobrevilla oscar.sobrevilla@gmail.com
  * Released under MIT license
  */
 (function ($) {
@@ -298,7 +298,7 @@
       .text(name)
     )
   });
-  
+
   SideMenuUserAccountItem.prototype = Object.create(SideMenuItem.prototype);
   SideMenuUserAccountItem.prototype.constructor = SideMenuUserAccountItem;
 
