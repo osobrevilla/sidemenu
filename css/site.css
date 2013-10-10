@@ -133,12 +133,12 @@
         position: absolute;
         content: "»";
         right: 0;
-        font-size: 2.1em;
+        font-size: 1.7em;
         color: #ADADAD;
         top: 0;
         font-family: arial;
         line-height: 0;
-        padding: .7em;
+        padding: .9em;
         font-weight: 100;
     }
 
@@ -208,13 +208,13 @@
     }
     .sm-useraccount-photo { 
         float: left;
-        width: 60px;
+        width: 50px;
         border: solid 3px rgba(0, 0, 0, 0.2);
         border-radius: 3px;
     }
     .sm-useraccount-name { 
-        padding: 1em; 
-        margin-left: 60px;
+        padding: .7em 1em;
+        margin-left: 50px;
     }
 
     .sm .sm-back:hover { background: #4BAA00; }
