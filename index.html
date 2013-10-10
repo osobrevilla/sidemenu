@@ -2,95 +2,138 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Aside Menu</title>
+    <title>SimeMenu.js</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="css/site.css" media="all" />
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/SideMenu.js"></script>
     <script type="text/javascript">
 
-        $(function(){
+        $(function () {
 
-             var isTouch = "ontouchstart" in document.documentElement;
-            
+      var isTouch = "ontouchstart" in document.documentElement;
 
-            SideMenu.options.back = "◀ Atras";
-            
+      SideMenu.options.back = "◀ Back";
 
-            shareListItem = new SideMenuListItem("Compartir")
-              .addSubMenu([
-                new SideMenuItem("Facebook", {
-                  url: "http://facebook.com",
-                  cls: "fb"
-                }),
-                new SideMenuItem("Twitter", {
-                  url: "http://twitter.com",
-                  cls: "tw"
-                }),
-                new SideMenuItem("Google+", {
-                  url: "http://youtube.com/share",
-                  cls: "gg"
-                }),
-                new SideMenuItem("Pinterest", {
-                  url: "http://pinteres.com/share",
-                  cls: "pin"
-                })
-              ], {
-                title: "Compartir en:"
-              });
+      SideMenuUserAccountItem = new SideMenuUserAccountItem(
+        "Ana Cueva", 
+        "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
+      );
 
-            editionsListItem = new SideMenuListItem("Ediciones")
-              .addSubMenu([
-                new SideMenuItemLink("Cuerpo A"),
-                new SideMenuItemLink("DT"),
-                new SideMenuItemLink("Economia"),
-                new SideMenuItemLink("Luces"),
-                new SideMenuItemLink("Suplemento 1"),
-                new SideMenuListItem("Mundo").addSubMenu([
-                  new SideMenuItemLink("Estados Unidos"),
-                  new SideMenuItemLink("Europa"),
-                  new SideMenuItemLink("America Latina"),
-                  new SideMenuItemLink("Perú"),
-                  new SideMenuItemLink("Colombia"),
-                  new SideMenuItemLink("Chile"),
-                  new SideMenuItemLink("Argentina")
-                ], {
-                  title: "Actualidad"
-                })
-              ], {
-                title: "Ediciones de hoy"
-              });
+      shareListItem = new SideMenuListItem("Share", [
+        new SideMenuItemButton("Facebook", function () {
+          alert("Facebook Share");
+        }, {
+          cls: "fb"
+        }),
+        new SideMenuItemButton("Twitter", function () {
+          alert("Twitter Share");
+        }, {
+          cls: "tw"
+        }),
+        new SideMenuItemButton("Google+", function () {
+          alert("Google Share");
+        }, {
+          cls: "gg"
+        }),
+        new SideMenuItemButton("Pinterest", function () {
+          alert("Pinterest Share");
+        }, {
+          cls: "pin"
+        })
+      ]);
+
+      editionsListItem = new SideMenuListItem("Animals", [
+        new SideMenuItemLink("Tiger"),
+        new SideMenuItemLink("Dog"),
+        new SideMenuItemLink("Cat"),
+        new SideMenuListItem("Birds", [
+          new SideMenuItemLink("Eagle"),
+          new SideMenuItemLink("Alcon"),
+          new SideMenuItemLink("Tucan"),
+          new SideMenuItemLink("Loro"),
+          new SideMenuItemLink("Chiken"),
+          new SideMenuItemLink("Duck")
+        ]),
+        new SideMenuItemLink("Ping"),
+        new SideMenuItemLink("Crocodile")
+      ]);
+
+      worldListItem = new SideMenuListItem("Continents", [
+        new SideMenuItemLink("Europe"),
+        new SideMenuItemLink("Asia"),
+        new SideMenuItemLink("Africa"),
+        new SideMenuListItem("North America", [
+          new SideMenuItemLink("Canada"),
+          new SideMenuItemLink("Mexico"),
+          new SideMenuItemLink("United States")
+        ]),
+        new SideMenuItemLink("Center America"),
+        new SideMenuListItem("South America", [
+          new SideMenuItemLink("Argentina"),
+          new SideMenuItemLink("Bolivia"),
+          new SideMenuItemLink("Brasil"),
+          new SideMenuItemLink("Colombia"),
+          new SideMenuItemLink("Chile"),
+          new SideMenuItemLink("Ecuador"),
+          new SideMenuItemLink("Paraguay"),
+          new SideMenuListItem("Perú", [
+            new SideMenuItemLink("Lima"),
+            new SideMenuItemLink("Trujillo"),
+            new SideMenuItemLink("Loreto"),
+            new SideMenuItemLink("Cuzco"),
+            new SideMenuItemLink("Puno"),
+            new SideMenuItemLink("Cajamarca"),
+            new SideMenuItemButton("etc..")
+          ]),
+          new SideMenuItemLink("Uruguay")
+        ]),
+        new SideMenuItemLink("Oceanía"),
+        new SideMenuItemLink("Antartida")
+      ])
+
+      sideMainMenu = new SideMainMenu([
+        SideMenuUserAccountItem,
+        editionsListItem,
+        new SideMenuItem("Download"),
+        worldListItem,
+        shareListItem,
+        new SideMenuItemButton("Close", function () {
+          sideMainMenu.close();
+        })
+      ]).appendTo('#menu');
 
 
-            sideMainMenu = new SideMainMenu([
-              shareListItem,
-              editionsListItem,
-              new SideMenuItem("Descargar página PDF"),
-              new SideMenuItemButton("Salir", function () {
-                alert("Se presionó el botón SALIR");
-              })
-            ], {
-              title: "Opciones"
-            }).appendTo('#menu');
 
-            $("body").on(isTouch ? 'touchend' : 'click',  function(e){
-              e.target === document.body && sideMainMenu.close();
-            })
 
-            $("button").on(isTouch ? 'touchend' : 'click', function(){
-              sideMainMenu.toggle();
-            });
-            
-            if (document.addEventListener)
-             document.addEventListener('touchmove', function(e){
-              e.preventDefault();
-             }, false);
-        });
+
+
+
+
+
+
+
+
+      $("body").on(isTouch ? 'touchend' : 'click', function (e) {
+        e.target === document.getElementById("wrapp") && sideMainMenu.close();
+      })
+
+      $("button").on(isTouch ? 'touchend' : 'click', function () {
+        sideMainMenu.toggle();
+      });
+
+      if (document.addEventListener)
+        document.addEventListener('touchmove', function (e) {
+          e.preventDefault();
+        }, false);
+    });
         
     </script>
 </head>
 <body>
-    <button >Open</button>
-    <div id="menu" class="sm-main"></div>
+    <div id="wrapp">
+      <button>Open</button>
+      <div id="menu" class="sm-main"></div>
+    </div>
 </body>
 </html>

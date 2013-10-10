@@ -49,9 +49,10 @@
     button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
     textarea{overflow:auto;vertical-align:top}
     table{border-collapse:collapse;border-spacing:0}
-    html { height: 100%; width: 100%;}
+    html, body { height: 100%;}
     
-    
+    #wrapp { position: relative; height: 100%; min-height: 100%; overflow: hidden;}
+
     /* =============================================================================
     
     Application
@@ -64,10 +65,8 @@
         margin: 0;
         padding: 0;  
         -webkit-font-smoothing:antialiased;
-        overflow: hidden;
          height: 100%; 
          width: 100%;
-         position: relative;
     }
     
     .sm-main {
@@ -76,11 +75,11 @@
         right: 0;
         top: 0;
         width: 260px;
-        -moz-transform:translate3d(100%, 0, 0);
-        -webkit-transform:translate3d(100%, 0, 0);
-        -o-transform:translate3d(100%, 0, 0);
-        -ms-transform:translate3d(100%, 0, 0);
-        transform:translate3d(100%, 0, 0);
+        -moz-transform:translate(100%, 0);
+        -webkit-transform:translate(100%, 0);
+        -o-transform:translate(100%, 0);
+        -ms-transform:translate(100%, 0);
+        transform:translate(100%, 0);
         z-index: 1;
     }
     .sm-item-title,.sm a { color: #888; cursor: pointer; text-decoration: none; }
@@ -113,13 +112,14 @@
     }
     .sm-main > .sm { display: block; margin: 0; }
     .sm-main > .sm-open { 
-        -moz-transform:translate3d(-100%, 0, 0); 
-        -webkit-transform:translate3d(-100%, 0, 0); 
-        -ms-transform:translate3d(-100%, 0, 0); 
-        -o-transform:translate3d(-100%, 0, 0); 
-        transform:translate3d(-100%, 0, 0); 
+        -moz-transform:translate(-100%, 0);
+        -webkit-transform:translate(-100%, 0);
+        -ms-transform:translate(-100%, 0);
+        -o-transform:translate(-100%, 0);
+        transform:translate(-100%, 0);
         box-shadow: 0 0 11px #bbb; 
     }
+
     .sm-open { margin-left: 0;  }
     .sm ul {
         list-style: none;
@@ -127,13 +127,30 @@
         overflow-y: scroll;
         padding: 0;
     }
+    
+    .sm .sm-item-more > .sm-item-title::after {
+        display: block;
+        position: absolute;
+        content: "▶";
+        right: 0;
+        padding: 1.2em 1em;
+        font-size: 1em;
+        color: #ADADAD;
+        top: 0;
+        line-height: 1em;
+    }
+
     .sm .sm-item-title:hover {
         -webkit-box-shadow: inset 0 -1px rgba(0,0,0,0);
         background: rgba(0,0,0,0.2);
         box-shadow: inset 0 -1px rgba(0,0,0,0);
         color: #FFF;
     }
+    .sm .sm-item-title:hover::after {
+        color: white;
+    }
     .sm-item-title {
+        position: relative;
         -webkit-transition: background .3s,box-shadow .3s;
         -moz-transition: background .3s,box-shadow .3s;
         box-shadow: inset 0 -1px rgba(0,0,0,0.2);
@@ -163,6 +180,27 @@
         text-transform: uppercase;
          transition: background .3s,box-shadow .3s;
     }
+
+    .sm-item-useraccount {
+        background: #73BE13;
+        color: #FFF;
+        font-size: 2em;
+        font-weight: 300;
+        margin: 0;
+        padding: .5em;
+        overflow: hidden;
+    }
+    .sm-useraccount-photo { 
+        float: left;
+        width: 60px;
+        border: solid 3px rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+    }
+    .sm-useraccount-name { 
+        padding: 1em; 
+        margin-left: 60px;
+    }
+
     .sm .sm-back:hover { background: #4BAA00; }
     .sm .fb:hover { background-color: #3b5998; color: #FFF; }
     .sm .tw:hover { background-color: #4099ff; color: #FFF; }

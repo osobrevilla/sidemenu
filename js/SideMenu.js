@@ -8,18 +8,15 @@
   var isTouch = "ontouchstart" in document.documentElement;
 
   // Object.create Polyfill
-  if (!Object.create) { 
+  if (!Object.create)
     Object.create = (function () {
       function F() {}
       return function (o) {
-        if (arguments.length != 1) {
-          throw new Error('Object.create implementation only accepts one parameter.');
-        }
         F.prototype = o
         return new F()
       }
-    })()
-  }
+    })();
+  
 
   // Scroll Handler for mobile devices
   var touchScroll = function (id) {
@@ -126,8 +123,9 @@
    */
 
   SideMainMenu = function (list, options) {
-    options.back = '';
-    SideMenu.apply(this, arguments);
+    options = options || {};
+    options.back = "";
+    SideMenu.call(this, list, options);
     this.currentMenu = this;
   };
   SideMainMenu.prototype = Object.create(SideMenu.prototype);
@@ -187,6 +185,9 @@
       .append($('<span class="sm-item-icon"/>'))
       .append($('<span class="sm-item-text"/>').text(title))
       .appendTo(this._el);
+
+    if (this.options.cls)
+      this._button.addClass(this.options.cls);
     this.el = this._el.get(0);
     this.parent = null;
   };
@@ -203,29 +204,26 @@
    * Class SideMenuListItem
    */
 
-  SideMenuListItem = function (title, list, cls) {
+  SideMenuListItem = function (title, subMenu, cls) {
     var that = this;
-    SideMenuItem.call(this, title);
+    SideMenuItem.call(this, title, {
+      cls: cls
+    });
     this._el
       .addClass('sm-item-more')
-      .addClass(cls || '')
       .first()
       .on('click', '.sm-item-title', function (e) {
         e.stopPropagation();
         that.subMenu.toggle();
       })
-    this.subMenu = null;
+    this.subMenu = new SideSubMenu(subMenu, {
+      title: title
+    });
+    this.subMenu.setParent(this)
+    this._el.append(this.subMenu.el);
   };
   SideMenuListItem.prototype = Object.create(SideMenuItem.prototype);
-  $.extend(SideMenuListItem.prototype, {
-    constructor: SideMenuListItem,
-    addSubMenu: function (subMenu, options) {
-      this.subMenu = new SideSubMenu(subMenu, options);
-      this.subMenu.setParent(this)
-      this._el.append(this.subMenu.el);
-      return this;
-    }
-  });
+  SideMenuListItem.prototype.constructor = SideMenuListItem;
 
 
 
@@ -240,10 +238,7 @@
     this._el.addClass('sm-item-link');
   };
   SideMenuItemLink.prototype = Object.create(SideMenuItem.prototype);
-  $.extend(SideMenuItemLink.prototype, {
-    constructor: SideMenuItemLink
-  });
-
+  SideMenuItemLink.prototype.constructor = SideMenuItemLink;
 
 
 
@@ -251,16 +246,40 @@
    * Class SideMenuItemButton
    */
 
-  SideMenuItemButton = function (title, callback) {
+  SideMenuItemButton = function (title, callback, options) {
     var that = this;
-    SideMenuItem.call(this, title);
+    SideMenuItem.call(this, title, options);
     this._el.addClass('sm-item-button');
     this._el.on('click', function (e) {
       callback && callback.call(this, e, that);
     });
   };
   SideMenuItemButton.prototype = Object.create(SideMenuItem.prototype);
-  $.extend(SideMenuItemButton.prototype, {
-    constructor: SideMenuItemButton
-  });
+  SideMenuItemButton.prototype.constructor = SideMenuItemButton;
+
+
+
+  /*
+   * Class SideMenuSingleItem
+   */
+
+  SideMenuUserAccountItem = function (name, urlphoto) {
+    var that = this;
+    this._el = $('<div/>');
+    this.el = this._el.get(0);
+    this._el.addClass('sm-item-useraccount');
+    this._el.append(
+      this.photo = $('<img/>')
+        .addClass('sm-useraccount-photo')
+        .attr({ src: urlphoto, width: 60})
+    )
+    this._el.append(
+      this.name = $('<div/>')
+      .addClass('sm-useraccount-name')
+      .text(name)
+    )
+  };
+  SideMenuUserAccountItem.prototype = Object.create(SideMenuItem.prototype);
+  SideMenuUserAccountItem.prototype.constructor = SideMenuUserAccountItem;
+
 }(jQuery));
