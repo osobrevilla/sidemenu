@@ -8,7 +8,6 @@
   var isTouch = "ontouchstart" in document.documentElement;
 
   // Object.create Polyfill
-
   if (!Object.create) { 
     Object.create = (function () {
       function F() {}
@@ -22,17 +21,20 @@
     })()
   }
 
+  // Scroll Handler for mobile devices
   var touchScroll = function (id) {
-    if (isTouch) { 
-      var el = $(id), start = 0;
-      el.on("touchstart", function (e) {
-        start = this.scrollTop + e.touches[0].pageY;
-      });
-      el.on("touchmove", function (e) {
-        this.scrollTop = start - e.touches[0].pageY;
-        e.preventDefault();
-      });
+    if (!isTouch) {
+      return
     }
+    var pos = 0;
+    $(id).on("touchstart", function (event) {
+      var e = event.originalEvent;
+      pos = this.scrollTop + e.touches[0].pageY;
+    }).on("touchmove", function (event) {
+      var e = event.originalEvent;
+      this.scrollTop = pos - e.touches[0].pageY;
+      e.preventDefault();
+    });
   };
 
   /*
@@ -45,9 +47,10 @@
     this.options = $.extend({}, SideMenu.options, options);
     this._el = $('<div/>')
       .addClass('sm');
-    touchScroll(this._el);
+    
     this._list = $('<div/>').appendTo(this._el).get(0);
     this.el = this._el.get(0);
+    touchScroll(this.el);
     this.items = [];
     for (var i in items)
       this.addItem(items[i]);
