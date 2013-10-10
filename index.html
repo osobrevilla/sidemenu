@@ -3,12 +3,16 @@
 <head>
     <meta charset="utf-8">
     <title>Aside Menu</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="css/site.css" media="all" />
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/SideMenu.js"></script>
     <script type="text/javascript">
+
         $(function(){
+
+             var isTouch = "ontouchstart" in document.documentElement;
+            
 
             SideMenu.options.back = "◀ Atras";
             
@@ -69,15 +73,24 @@
               title: "Opciones"
             }).appendTo('#menu');
 
-            $("body").on('click', function(e){
+            $("body").on(isTouch ? 'touchend' : 'click',  function(e){
               e.target === document.body && sideMainMenu.close();
             })
+
+            $("button").on(isTouch ? 'touchend' : 'click', function(){
+              sideMainMenu.toggle();
+            });
+            
+            if (document.addEventListener)
+             document.addEventListener('touchmove', function(e){
+              e.preventDefault();
+             }, false);
         });
         
     </script>
 </head>
 <body>
-    <button onclick="sideMainMenu.toggle();">Open</button>
+    <button >Open</button>
     <div id="menu" class="sm-main"></div>
 </body>
 </html>

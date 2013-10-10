@@ -5,7 +5,10 @@
  */
 (function ($) {
 
+  var isTouch = "ontouchstart" in document.documentElement;
+
   // Object.create Polyfill
+
   if (!Object.create) { 
     Object.create = (function () {
       function F() {}
@@ -19,7 +22,18 @@
     })()
   }
 
-
+  var touchScroll = function (id) {
+    if (isTouch) { 
+      var el = $(id), start = 0;
+      el.on("touchstart", function (e) {
+        start = this.scrollTop + e.touches[0].pageY;
+      });
+      el.on("touchmove", function (e) {
+        this.scrollTop = start - e.touches[0].pageY;
+        e.preventDefault();
+      });
+    }
+  };
 
   /*
    * Class SideMenu
@@ -31,6 +45,7 @@
     this.options = $.extend({}, SideMenu.options, options);
     this._el = $('<div/>')
       .addClass('sm');
+    touchScroll(this._el);
     this._list = $('<div/>').appendTo(this._el).get(0);
     this.el = this._el.get(0);
     this.items = [];
