@@ -279,10 +279,10 @@
 
 
   /**
-   * Class SideMenuSingleItem
+   * Class SideMenuUserAccountItem
    */
 
-  SideMenuUserAccountItem = (function (name, urlphoto) {
+  SideMenuUserAccountItem = (function (name, src) {
     var that = this;
     this._el = $('<div/>');
     this.el = this._el.get(0);
@@ -290,7 +290,7 @@
     this._el.append(
       this.photo = $('<img/>')
         .addClass('sm-useraccount-photo')
-        .attr({ src: urlphoto, width: 60})
+        .attr({ src: src })
     )
     this._el.append(
       this.name = $('<div/>')
