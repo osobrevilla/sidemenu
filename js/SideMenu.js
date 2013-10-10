@@ -298,6 +298,7 @@
       .text(name)
     )
   });
+  
   SideMenuUserAccountItem.prototype = Object.create(SideMenuItem.prototype);
   SideMenuUserAccountItem.prototype.constructor = SideMenuUserAccountItem;
 
