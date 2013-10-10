@@ -71,7 +71,8 @@
     this.parent = null;
   });
 
-  SideMenu.prototype = Object.create({
+  SideMenu.prototype = {
+    constructor: SideMenu,
     addItem: function (menuItem) {
       menuItem.setParent(this);
       this.items.push(menuItem);
@@ -123,7 +124,7 @@
       var item = this.getItemByName(title);
       return item ? item.subMenu : item;
     }
-  });
+  };
   $.extend(SideMenu, {
     options: {
       back: 'Back'
