@@ -131,13 +131,15 @@
     .sm .sm-item-more > .sm-item-title::after {
         display: block;
         position: absolute;
-        content: "▶";
+        content: "»";
         right: 0;
-        padding: 1.2em 1em;
-        font-size: 1em;
+        font-size: 2.1em;
         color: #ADADAD;
         top: 0;
-        line-height: 1em;
+        font-family: arial;
+        line-height: 0;
+        padding: .7em;
+        font-weight: 100;
     }
 
     .sm .sm-item-title:hover {
@@ -175,10 +177,24 @@
         font-weight: 700;
         letter-spacing: 1px;
         outline: 0;
-        padding: 1em;
+        padding: 1em 1em 1em 2.5em;
         position: relative;
         text-transform: uppercase;
          transition: background .3s,box-shadow .3s;
+    }
+    .sm .sm-back::after {
+        display: block;
+        position: absolute;
+        content: "«";
+        left: 0;
+        font-size: 2em;
+        color: #FFF;
+        top: 0;
+        font-family: arial;
+        font-weight: 100;
+        line-height: 0;
+        padding: .7em .5em;
+        -webkit-font-smoothing: antialiased;
     }
 
     .sm-item-useraccount {
