@@ -151,6 +151,7 @@
     .sm .sm-item-title:hover::after {
         color: white;
     }
+    
     .sm-item-title {
         position: relative;
         -webkit-transition: background .3s,box-shadow .3s;
