@@ -1,4 +1,4 @@
-asidemenu
+SideMenu.js
 =========
 
-Side menu with slide animation and configurable items.
+JavaScript library to create side menus with full object oriented way. comming soon documentation.
