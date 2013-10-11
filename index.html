@@ -1,20 +1,129 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>SideMenu.js by osobrevilla</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="css/site.css" media="screen" charset="utf-8" />
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/SideMenu.js"></script>
+    <script type="text/javascript">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
+      $(function () {
+
+        var isTouch = "ontouchstart" in document.documentElement;
+
+        //SideMenu.options.back = "Back";
+
+        userAcountItem = new SideMenuUserAccountItem(
+          "Ana Cueva", 
+          "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
+        );
+
+        shareListItem = new SideMenuListItem("Share", [
+          new SideMenuItemButton("Facebook", function () {
+            alert("Facebook Share");
+          }, {
+            cls: "fb"
+          }),
+          new SideMenuItemButton("Twitter", function () {
+            alert("Twitter Share");
+          }, {
+            cls: "tw"
+          }),
+          new SideMenuItemButton("Google+", function () {
+            alert("Google Share");
+          }, {
+            cls: "gg"
+          }),
+          new SideMenuItemButton("Pinterest", function () {
+            alert("Pinterest Share");
+          }, {
+            cls: "pin"
+          })
+        ]);
+
+        editionsListItem = new SideMenuListItem("Animals", [
+          new SideMenuItemLink("Tiger"),
+          new SideMenuItemLink("Dog"),
+          new SideMenuItemLink("Cat"),
+          new SideMenuListItem("Birds", [
+            new SideMenuItemLink("Eagle"),
+            new SideMenuItemLink("Hawk"),
+            new SideMenuItemLink("Tucan"),
+            new SideMenuItemLink("Parrot"),
+            new SideMenuItemLink("Chicken"),
+            new SideMenuItemLink("Duck")
+          ]),
+          new SideMenuItemLink("Pig"),
+          new SideMenuItemLink("Crocodile")
+        ]);
+
+        worldListItem = new SideMenuListItem("Continents", [
+          new SideMenuItemLink("Europe"),
+          new SideMenuItemLink("Asia"),
+          new SideMenuItemLink("Africa"),
+          new SideMenuListItem("North America", [
+            new SideMenuItemLink("Canada"),
+            new SideMenuItemLink("Mexico"),
+            new SideMenuItemLink("United States")
+          ]),
+          new SideMenuItemLink("Center America"),
+          new SideMenuListItem("South America", [
+            new SideMenuItemLink("Argentina"),
+            new SideMenuItemLink("Bolivia"),
+            new SideMenuItemLink("Brasil"),
+            new SideMenuItemLink("Colombia"),
+            new SideMenuItemLink("Chile"),
+            new SideMenuItemLink("Ecuador"),
+            new SideMenuItemLink("Paraguay"),
+            new SideMenuListItem("Perú", [
+              new SideMenuItemLink("Lima"),
+              new SideMenuItemLink("Trujillo"),
+              new SideMenuItemLink("Loreto"),
+              new SideMenuItemLink("Cuzco"),
+              new SideMenuItemLink("Puno"),
+              new SideMenuItemLink("Cajamarca"),
+              new SideMenuItemButton("etc..")
+            ]),
+            new SideMenuItemLink("Uruguay")
+          ]),
+          new SideMenuItemLink("Oceanía"),
+          new SideMenuItemLink("Antartida")
+        ])
+
+        sideMainMenu = new SideMainMenu([
+          userAcountItem,
+          editionsListItem,
+          new SideMenuItem("Download"),
+          worldListItem,
+          shareListItem,
+          new SideMenuItemButton("Close", function () {
+            sideMainMenu.close();
+          })
+        ]).appendTo('#menu');
+
+        /* Others for demo */
+
+        $("body").on(isTouch ? 'touchend' : 'click', function (e) {
+          e.target === document.getElementById("wrapp") && sideMainMenu.close();
+        })
+
+        $("button").on(isTouch ? 'touchend' : 'click', function () {
+          sideMainMenu.toggle();
+        });
+
+        if (document.addEventListener)
+          document.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+          }, false);
+      });
+        
+    </script>
+</head>
+<body>
+    <div id="wrapp">
       <header>
         <h1 class="header">SideMenu.js</h1>
         <p class="header">JavaScript library to create side menus with full object oriented way.</p>
@@ -29,19 +138,8 @@
 
 
       </header>
-      <section>
-        <h3>
-<a name="sidemenujs" class="anchor" href="#sidemenujs"><span class="octicon octicon-link"></span></a>SideMenu.js</h3>
-
-<p>JavaScript library to create side menus with full object oriented way.</p>
-
-<p><strong>Library documentation soon!</strong></p>
-      </section>
-      <footer>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
-      </footer>
+      <button>Open</button>
+      <div id="menu" class="sm-main"></div>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		
-  </body>
+</body>
 </html>
