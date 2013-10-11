@@ -2,137 +2,143 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>SideMenu.js</title>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>SideMenu.js by osobrevilla</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="css/site.css" media="screen" charset="utf-8" />
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/SideMenu.js"></script>
     <script type="text/javascript">
 
-        $(function () {
+      $(function () {
 
-      var isTouch = "ontouchstart" in document.documentElement;
+        var isTouch = "ontouchstart" in document.documentElement;
 
-      //SideMenu.options.back = "Back";
+        //SideMenu.options.back = "Back";
 
-      userAcountItem = new SideMenuUserAccountItem(
-        "Ana Cueva", 
-        "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
-      );
+        userAcountItem = new SideMenuUserAccountItem(
+          "Ana Cueva", 
+          "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
+        );
 
-      shareListItem = new SideMenuListItem("Share", [
-        new SideMenuItemButton("Facebook", function () {
-          alert("Facebook Share");
-        }, {
-          cls: "fb"
-        }),
-        new SideMenuItemButton("Twitter", function () {
-          alert("Twitter Share");
-        }, {
-          cls: "tw"
-        }),
-        new SideMenuItemButton("Google+", function () {
-          alert("Google Share");
-        }, {
-          cls: "gg"
-        }),
-        new SideMenuItemButton("Pinterest", function () {
-          alert("Pinterest Share");
-        }, {
-          cls: "pin"
-        })
-      ]);
+        shareListItem = new SideMenuListItem("Share", [
+          new SideMenuItemButton("Facebook", function () {
+            alert("Facebook Share");
+          }, {
+            cls: "fb"
+          }),
+          new SideMenuItemButton("Twitter", function () {
+            alert("Twitter Share");
+          }, {
+            cls: "tw"
+          }),
+          new SideMenuItemButton("Google+", function () {
+            alert("Google Share");
+          }, {
+            cls: "gg"
+          }),
+          new SideMenuItemButton("Pinterest", function () {
+            alert("Pinterest Share");
+          }, {
+            cls: "pin"
+          })
+        ]);
 
-      editionsListItem = new SideMenuListItem("Animals", [
-        new SideMenuItemLink("Tiger"),
-        new SideMenuItemLink("Dog"),
-        new SideMenuItemLink("Cat"),
-        new SideMenuListItem("Birds", [
-          new SideMenuItemLink("Eagle"),
-          new SideMenuItemLink("Hawk"),
-          new SideMenuItemLink("Tucan"),
-          new SideMenuItemLink("Parrot"),
-          new SideMenuItemLink("Chicken"),
-          new SideMenuItemLink("Duck")
-        ]),
-        new SideMenuItemLink("Pig"),
-        new SideMenuItemLink("Crocodile")
-      ]);
-
-      worldListItem = new SideMenuListItem("Continents", [
-        new SideMenuItemLink("Europe"),
-        new SideMenuItemLink("Asia"),
-        new SideMenuItemLink("Africa"),
-        new SideMenuListItem("North America", [
-          new SideMenuItemLink("Canada"),
-          new SideMenuItemLink("Mexico"),
-          new SideMenuItemLink("United States")
-        ]),
-        new SideMenuItemLink("Center America"),
-        new SideMenuListItem("South America", [
-          new SideMenuItemLink("Argentina"),
-          new SideMenuItemLink("Bolivia"),
-          new SideMenuItemLink("Brasil"),
-          new SideMenuItemLink("Colombia"),
-          new SideMenuItemLink("Chile"),
-          new SideMenuItemLink("Ecuador"),
-          new SideMenuItemLink("Paraguay"),
-          new SideMenuListItem("Perú", [
-            new SideMenuItemLink("Lima"),
-            new SideMenuItemLink("Trujillo"),
-            new SideMenuItemLink("Loreto"),
-            new SideMenuItemLink("Cuzco"),
-            new SideMenuItemLink("Puno"),
-            new SideMenuItemLink("Cajamarca"),
-            new SideMenuItemButton("etc..")
+        editionsListItem = new SideMenuListItem("Animals", [
+          new SideMenuItemLink("Tiger"),
+          new SideMenuItemLink("Dog"),
+          new SideMenuItemLink("Cat"),
+          new SideMenuListItem("Birds", [
+            new SideMenuItemLink("Eagle"),
+            new SideMenuItemLink("Hawk"),
+            new SideMenuItemLink("Tucan"),
+            new SideMenuItemLink("Parrot"),
+            new SideMenuItemLink("Chicken"),
+            new SideMenuItemLink("Duck")
           ]),
-          new SideMenuItemLink("Uruguay")
-        ]),
-        new SideMenuItemLink("Oceanía"),
-        new SideMenuItemLink("Antartida")
-      ])
+          new SideMenuItemLink("Pig"),
+          new SideMenuItemLink("Crocodile")
+        ]);
 
-      sideMainMenu = new SideMainMenu([
-        userAcountItem,
-        editionsListItem,
-        new SideMenuItem("Download"),
-        worldListItem,
-        shareListItem,
-        new SideMenuItemButton("Close", function () {
-          sideMainMenu.close();
+        worldListItem = new SideMenuListItem("Continents", [
+          new SideMenuItemLink("Europe"),
+          new SideMenuItemLink("Asia"),
+          new SideMenuItemLink("Africa"),
+          new SideMenuListItem("North America", [
+            new SideMenuItemLink("Canada"),
+            new SideMenuItemLink("Mexico"),
+            new SideMenuItemLink("United States")
+          ]),
+          new SideMenuItemLink("Center America"),
+          new SideMenuListItem("South America", [
+            new SideMenuItemLink("Argentina"),
+            new SideMenuItemLink("Bolivia"),
+            new SideMenuItemLink("Brasil"),
+            new SideMenuItemLink("Colombia"),
+            new SideMenuItemLink("Chile"),
+            new SideMenuItemLink("Ecuador"),
+            new SideMenuItemLink("Paraguay"),
+            new SideMenuListItem("Perú", [
+              new SideMenuItemLink("Lima"),
+              new SideMenuItemLink("Trujillo"),
+              new SideMenuItemLink("Loreto"),
+              new SideMenuItemLink("Cuzco"),
+              new SideMenuItemLink("Puno"),
+              new SideMenuItemLink("Cajamarca"),
+              new SideMenuItemButton("etc..")
+            ]),
+            new SideMenuItemLink("Uruguay")
+          ]),
+          new SideMenuItemLink("Oceanía"),
+          new SideMenuItemLink("Antartida")
+        ])
+
+        sideMainMenu = new SideMainMenu([
+          userAcountItem,
+          editionsListItem,
+          new SideMenuItem("Download"),
+          worldListItem,
+          shareListItem,
+          new SideMenuItemButton("Close", function () {
+            sideMainMenu.close();
+          })
+        ]).appendTo('#menu');
+
+        /* Others for demo */
+
+        $("body").on(isTouch ? 'touchend' : 'click', function (e) {
+          e.target === document.getElementById("wrapp") && sideMainMenu.close();
         })
-      ]).appendTo('#menu');
 
+        $("button").on(isTouch ? 'touchend' : 'click', function () {
+          sideMainMenu.toggle();
+        });
 
-  
-
-
-
-
-
-
-
-
-
-      $("body").on(isTouch ? 'touchend' : 'click', function (e) {
-        e.target === document.getElementById("wrapp") && sideMainMenu.close();
-      })
-
-      $("button").on(isTouch ? 'touchend' : 'click', function () {
-        sideMainMenu.toggle();
+        if (document.addEventListener)
+          document.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+          }, false);
       });
-
-      if (document.addEventListener)
-        document.addEventListener('touchmove', function (e) {
-          e.preventDefault();
-        }, false);
-    });
         
     </script>
 </head>
 <body>
     <div id="wrapp">
-      <button>Open</button>
+      <header id="header">
+        <h1 class="header">SideMenu.js</h1>
+        <p class="header">JavaScript library to create side menus with full object oriented way.</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/osobrevilla/sidemenu.js/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/osobrevilla/sidemenu.js/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/osobrevilla/sidemenu.js">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/osobrevilla">osobrevilla</a></p>
+
+        <button>Open demo</button>
+      </header>
+      
       <div id="menu" class="sm-main"></div>
     </div>
 </body>
