@@ -52,6 +52,7 @@
     html, body { height: 100%;}
     
     #wrapp { position: relative; height: 100%; min-height: 100%; overflow: hidden;}
+    #header { padding: 2em; font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;}
 
     /* =============================================================================
     
@@ -60,8 +61,7 @@
     ========================================================================== */
     body {
         background: #eee;
-        font-size: 10px;
-        font-family: "helvetica", Arial;
+        font: 100%/1.5 "helvetica", Arial;
         margin: 0;
         padding: 0;  
         -webkit-font-smoothing:antialiased;
@@ -70,6 +70,7 @@
     }
     
     .sm-main {
+        font-size: 10px;
         height: 100%;
         position: absolute;
         right: 0;
