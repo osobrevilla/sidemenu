@@ -41,7 +41,7 @@
       p;
     this.options = $.extend({}, SideMenu.options, options);
     this._el = $('<div/>')
-      .addClass('sm');
+      .addClass('sm sm-added');
     
     this._list = $('<div/>').appendTo(this._el).get(0);
     this.el = this._el.get(0);
@@ -77,6 +77,18 @@
       menuItem.setParent(this);
       this.items.push(menuItem);
       this._list.appendChild(menuItem.el);
+      this._refresh();
+    },
+    _refresh: function(){
+      (function (obj) {
+        if (obj) {
+          if (obj instanceof SideMainMenu) {
+            obj._refresh();
+            return;
+          }
+          arguments.callee(obj.parent);
+        }
+      }(this.parent));
     },
     setParent: function (obj) {
       this.parent = obj;
@@ -125,10 +137,9 @@
       return item ? item.subMenu : item;
     }
   };
-  $.extend(SideMenu, {
-    options: {
-      back: 'Back'
-    }
+  
+  SideMenu.options = ({
+    back: 'back'
   });
 
 
@@ -141,15 +152,21 @@
     options = options || {};
     options.back = "";
     SideMenu.call(this, list, options);
-    this.currentMenu = this;
+    this._target = null;
   });
 
   SideMainMenu.prototype = Object.create(SideMenu.prototype);
   $.extend(SideMainMenu.prototype, {
     constructor: SideMainMenu,
     appendTo: function (target) {
-      $(target).append(this._el).append(this._el.find('.sm-submenu'));
+      this._target = $(target).append(this._el);
+      this._refresh();
       return this;
+    },
+    _refresh: function(){
+      this._target && this._target.append(
+        this._target.find('.sm-added').removeClass('sm-added')
+      );
     },
     close: function () {
       SideMenu.prototype.close.call(this);
@@ -168,12 +185,7 @@
   });
 
   SideSubMenu.prototype = Object.create(SideMenu.prototype);
-  $.extend(SideSubMenu.prototype, {
-    constructor: SideSubMenu,
-    refresh: function () {
-      this.menu.append(this._el.find('.sm-submenu'));
-    }
-  });
+  SideSubMenu.prototype.constructor = SideSubMenu;
 
 
 
@@ -191,7 +203,7 @@
     if (this.options.url) {
       this._button = $('<a/>').attr({
         href: this.options.url,
-        target: '_blank'
+        target: this.options.target
       });
     } else {
       this._button = $('<div/>');
@@ -236,7 +248,7 @@
     this.subMenu = new SideSubMenu(subMenu, {
       title: title
     });
-    this.subMenu.setParent(this)
+    this.subMenu.setParent(this);
     this._el.append(this.subMenu.el);
   });
 
@@ -249,9 +261,10 @@
    * Class SideMenuItemLink
    */
 
-  SideMenuItemLink = (function (title, url) {
+  SideMenuItemLink = (function (title, url, target) {
     SideMenuItem.call(this, title, {
-      url: url
+      url: url,
+      target: target
     });
     this._el.addClass('sm-item-link');
   });
