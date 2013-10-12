@@ -247,7 +247,7 @@
           }
           menuTarget.addItem(menuItem, index);
       }
-    },
+    }
   });
 
 
