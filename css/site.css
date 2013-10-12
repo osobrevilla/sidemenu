@@ -1,29 +1,25 @@
 @charset "UTF-8";
 
-    html, body { height: 100%;}
     
-    #wrapp { position: relative; min-height: 100%; overflow: hidden;}
-    #header { padding: 2em; font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;}
+    /* Demo Page */
+    
+    body  {background-color: #EEE; font: 100%/1.5 "helvetica", Arial; -webkit-font-smoothing:antialiased; padding: 1em 2em; }
+    .content { font-size: 80%; }
+    code { font-size: 130%;}
 
     /* =============================================================================
-    
-    Application
-    
+        SideMenu.js
     ========================================================================== */
-    body {
-        background-color: #EEE;
-        font: 100%/1.5 "helvetica", Arial;
-        margin: 0;
-        padding: 0;  
-        -webkit-font-smoothing:antialiased;
-    }
+    
+
     
     .sm-main {
         font-size: 10px;
         height: 100%;
-        position: absolute;
+        position: fixed;
         right: 0;
         top: 0;
+        bottom: 0;
         width: 260px;
         -moz-transform:translate(100%, 0);
         -webkit-transform:translate(100%, 0);
@@ -133,6 +129,7 @@
         text-transform: uppercase;
          transition: background .3s,box-shadow .3s;
     }
+    .sm .sm-back:hover { background: #4BAA00; }
     .sm .sm-back::after {
         display: block;
         position: absolute;
@@ -168,8 +165,8 @@
         margin-left: 50px;
     }
 
-    .sm .sm-back:hover { background: #4BAA00; }
+
     .sm .fb:hover { background-color: #3b5998; color: #FFF; }
     .sm .tw:hover { background-color: #4099ff; color: #FFF; }
-    .sm .gg:hover { background-color: #d34836; color: #FFF; }
+    .sm .gp:hover { background-color: #d34836; color: #FFF; }
     .sm .pin:hover { background-color: #c92228; color: #FFF; }
