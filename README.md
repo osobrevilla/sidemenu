@@ -1,9 +1,10 @@
-## Basic API documentation
+## SideMenu.js
 
-JavaScript library to create side menus with full object oriented way. comming soon documentation.
+JavaScript library to create side menus with full object oriented way.
 
 [see the demo](http://osobrevilla.github.io/sidemenu.js/)
 
+### Basic API documentation
 #### SideMenu Class
 
 Class that represent a list menu. this class is parent for **SideMenuMain** and **SideSubMenu** SubClases
