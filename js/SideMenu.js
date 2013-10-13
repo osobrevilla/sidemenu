@@ -330,7 +330,7 @@
     });
   });
 
-  SMButtonItem.prototype = Object.create(SMItem.prototype);
+  SMButtonItem.prototype = Object.create(SMLabelItem.prototype);
   SMButtonItem.prototype.constructor = SMButtonItem;
 
 
