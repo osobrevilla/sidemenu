@@ -79,16 +79,6 @@
           this._list.hasChildNodes() ?
             this._list.childNodes[index] : null);
     },
-    addItem: function (menuItem, index){
-      this._add(menuItem, index);
-      this._refresh();
-    },
-    addItems: function (menuItems, index){
-      var i;
-      for (i in menuItems)
-        this._add(menuItems[i], index + i);
-      this._refresh();
-    },
     _refresh: function(){
       (function (obj) {
         if (obj) {
@@ -103,7 +93,21 @@
     _setParent: function (obj) {
       this.parent = obj;
     },
+    addItem: function (menuItem, index){
+      this._add(menuItem, index);
+      this._refresh();
+      return this;
+    },
+    addItems: function (menuItems, index){
+      var i;
+      for (i in menuItems)
+        this._add(menuItems[i], index + i);
+      this._refresh();
+      return this;
+    },
     open: function () {
+      var that = this;
+      this.isOpen = true;
       (function (obj) {
         if (obj) {
           if (obj instanceof SideMenu) {
@@ -113,8 +117,12 @@
           arguments.callee(obj.parent);
         }
       }(this.parent));
-      this.isOpen = true;
-      this._el.addClass('sm-open');
+      
+      this._el.appendTo(this._el.parent())
+      setTimeout(function(){
+        that._el.addClass('sm-open');
+      });
+      return this;
     },
     close: function () {
       (function (items) {
@@ -127,6 +135,7 @@
       }(this.items));
       this.isOpen = false;
       this._el.removeClass('sm-open');
+      return this;
     },
     toggle: function () {
       this[this.isOpen ? 'close' : 'open']();
@@ -177,9 +186,6 @@
       this._target && this._target.append(
         this._target.find('.sm-added').removeClass('sm-added')
       );
-    },
-    close: function () {
-      SideMenu.prototype.close.call(this);
     }
   });
 
@@ -203,30 +209,8 @@
    * Class SMItem
    */
 
-  var SMItem = (function (title, options) {
-    var that = this,
-      p;
-    this.options = {};
-    for (p in options)
-      this.options[p] = options[p];
-    this._el = $('<div/>').addClass('sm-item');
-    if (this.options.url) {
-      this._button = $('<a/>').attr({
-        href: this.options.url,
-        target: this.options.target
-      });
-    } else {
-      this._button = $('<div/>');
-    }
-    this._button
-      .addClass('sm-item-title')
-      .addClass(this.options.clsName)
-      .append($('<span class="sm-item-icon"/>'))
-      .append($('<span class="sm-item-text"/>').text(this.title = title))
-      .appendTo(this._el);
-
-    if (this.options.clsName)
-      this._button.addClass(this.options.clsName);
+  var SMItem = (function () {
+    this._el = $('<div/>').addClass('sm-item')  
     this.el = this._el.get(0);
     this.parent = null;
   });
@@ -248,51 +232,87 @@
           menuTarget.addItem(menuItem, index);
       }
     },
+    moveToPosition: function(index){
+      if (this.parent)
+        this.moveToMenu(this.parent, index);
+    },
+    remove: function(){
+      if (this.parent){
+        var i;
+        this._el.remove();
+        for ( i in this.parent.items)
+          if ( this.parent.items[i] === this )
+            this.parent.items.splice(i, 1);
+      }
+    }
   });
 
 
+  /**
+   * Class SMLabelItem
+   */
+
+  var SMLabelItem = (function(title, clsName){
+    if (title === undefined) 
+      throw 'Error in SMLabelItem: title param is undefined';
+    SMItem.call(this);
+    this.title = title;
+    this._el.append(
+      this._label = $('<div/>')
+        .addClass('sm-item-label')
+        .addClass(clsName)
+        .append($('<span/>').addClass('sm-label-icon'))
+        .append($('<span/>').addClass('sm-label-text').text(this.title))
+    );
+  })
+
+  SMLabelItem.prototype = Object.create(SMItem.prototype);
+  SMLabelItem.prototype.constructor = SMLabelItem;
 
   /**
    * Class SMSubMenuItem
    */
 
-  var SMSubMenuItem = (function (title, subMenu, clsName) {
+  var SMSubMenuItem = (function (title, items, clsName) {
     var that = this;
-    SMItem.call(this, title, {
-      clsName: clsName
+    SMLabelItem.call(this, title, clsName);
+    this._el.addClass('sm-item-more');
+    this._label.on('click', function (e) {
+      e.stopPropagation();
+      that.subMenu.toggle();
     });
-    this._el
-      .addClass('sm-item-more')
-      .first()
-      .on('click', '.sm-item-title', function (e) {
-        e.stopPropagation();
-        that.subMenu.toggle();
-      })
-    this.subMenu = new SideSubMenu(subMenu, {
+    this.subMenu = new SideSubMenu(items, {
       title: title
     });
     this.subMenu._setParent(this);
     this._el.append(this.subMenu.el);
   });
 
-  SMSubMenuItem.prototype = Object.create(SMItem.prototype);
+  SMSubMenuItem.prototype = Object.create(SMLabelItem.prototype);
   SMSubMenuItem.prototype.constructor = SMSubMenuItem;
-
 
 
   /**
    * Class SMLinkItem
    */
 
-  var SMLinkItem = (function (title, url, target) {
-    SMItem.call(this, title, {
-      url: url,
-      target: target
-    });
+  var SMLinkItem = (function (title, url, target, clsName) {
+    if (!title || !url)
+      throw 'Error in SMLinkItem: invalid title or url param';
+    SMLabelItem.call(this, title);
+    this._label.replaceWith(
+      $('<a/>', {
+        href: url,
+        target: target
+      })
+      .addClass('sm-item-label')
+      .addClass(clsName)
+      .append(this._label.contents())
+    );
     this._el.addClass('sm-item-link');
   });
 
-  SMLinkItem.prototype = Object.create(SMItem.prototype);
+  SMLinkItem.prototype = Object.create(SMLabelItem.prototype);
   SMLinkItem.prototype.constructor = SMLinkItem;
 
 
@@ -303,9 +323,7 @@
 
   var SMButtonItem = (function (title, callback, clsName) {
     var that = this;
-    SMItem.call(this, title, {
-      clsName: clsName
-    });
+    SMLabelItem.call(this, title, clsName);
     this._el.addClass('sm-item-button');
     this._el.on('click', function (e) {
       callback && callback.call(this, e, that);
@@ -316,41 +334,16 @@
   SMButtonItem.prototype.constructor = SMButtonItem;
 
 
-
-  /**
-   * Class SMUserAccountItem
-   */
-
-  var SMUserAccountItem = (function (name, src) {
-    this._el = $('<div/>');
-    this.el = this._el.get(0);
-    this._el.addClass('sm-item-useraccount');
-    this._el.append(
-      this.photo = $('<img/>')
-        .addClass('sm-useraccount-photo')
-        .attr({ src: src })
-    )
-    this._el.append(
-      this.name = $('<div/>')
-      .addClass('sm-useraccount-name')
-      .text(name)
-    )
-  });
-
-  SMUserAccountItem.prototype = Object.create(SMItem.prototype);
-  SMUserAccountItem.prototype.constructor = SMUserAccountItem;
-
-
 /* add to namespace */
   
   $.extend(this, {
     SideMenu: SideMenu,
     SideMainMenu: SideMainMenu,
     SMItem: SMItem,
+    SMLabelItem: SMLabelItem,
     SMSubMenuItem: SMSubMenuItem,
     SMButtonItem: SMButtonItem,
-    SMLinkItem: SMLinkItem,
-    SMUserAccountItem:SMUserAccountItem
+    SMLinkItem: SMLinkItem
   });
 
 }.call(this /* window namespace or other ex. utils, helpers, etc*/, window.jQuery));
