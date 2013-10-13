@@ -3,8 +3,8 @@
     
     /* Demo Page */
     
-    body  {background-color: #EEE; font: 100%/1.5 "helvetica", Arial; -webkit-font-smoothing:antialiased; padding: 1em 2em; }
-    .content { font-size: 80%; }
+    body  {background-color: #EEE; font: 100%/1.5 Arial; -webkit-font-smoothing:antialiased; padding: 1em 2em; }
+    .content { font-size: 80%; text-shadow: 0 1px rgba(255,255,255,.7); color: #333; }
     code { font-size: 130%;}
 
     /* =============================================================================
@@ -28,7 +28,7 @@
         transform:translate(100%, 0);
         z-index: 1;
     }
-    .sm-item-title,.sm a { color: #888; cursor: pointer; text-decoration: none; }
+    .sm-item-label,.sm a { color: #888; cursor: pointer; text-decoration: none; }
     .sm .sm-title {
         background: #73BE13;
         color: #FFF;
@@ -74,7 +74,7 @@
         padding: 0;
     }
     
-    .sm .sm-item-more > .sm-item-title::after {
+    .sm .sm-item-more > .sm-item-label::after {
         display: block;
         position: absolute;
         content: "»";
@@ -88,17 +88,17 @@
         font-weight: 100;
     }
 
-    .sm .sm-item-title:hover {
+    .sm .sm-item-label:hover {
         -webkit-box-shadow: inset 0 -1px rgba(0,0,0,0);
         background: rgba(0,0,0,0.2);
         box-shadow: inset 0 -1px rgba(0,0,0,0);
         color: #FFF;
     }
-    .sm .sm-item-title:hover::after {
+    .sm .sm-item-label:hover::after {
         color: white;
     }
     
-    .sm-item-title {
+    .sm-item-label {
         position: relative;
         -webkit-transition: background .3s,box-shadow .3s;
         -moz-transition: background .3s,box-shadow .3s;

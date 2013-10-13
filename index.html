@@ -36,51 +36,51 @@
             new SMLinkItem("Cat", "https://www.google.com.pe/?#q=Cat", "_blank"),
             new SMSubMenuItem("Birds", [
                 new SMLinkItem("Eagle", "https://www.google.com.pe/?#q=eagle"),
-                new SMItem("Hawk"),
-                new SMItem("Tucan"),
+                new SMLabelItem("Hawk"),
+                new SMLabelItem("Tucan"),
                 new SMButtonItem("Parrot", function () {
                     alert("Hello World!")
                 }),
-                new SMItem("Chicken"),
-                new SMItem("Duck")
+                new SMLabelItem("Chicken"),
+                new SMLabelItem("Duck")
             ]),
-            new SMItem("Pig"),
+            new SMLabelItem("Pig"),
             new SMLinkItem("Crocodile", "https://www.google.com.pe/?#q=Crocodile")
         ]);
 
 
-        /* Simple Items */
+        /* Simple Label Items */
         var worldListItem = new SMSubMenuItem("Continents", [
-            new SMItem("Europe"),
-            new SMItem("Asia"),
-            new SMItem("Africa"),
+            new SMLabelItem("Europe"),
+            new SMLabelItem("Asia"),
+            new SMLabelItem("Africa"),
             new SMSubMenuItem("North America", [
-                new SMItem("Canada"),
-                new SMItem("Mexico"),
-                new SMItem("United States")
+                new SMLabelItem("Canada"),
+                new SMLabelItem("Mexico"),
+                new SMLabelItem("United States")
             ]),
-            new SMItem("Center America"),
+            new SMLabelItem("Center America"),
             new SMSubMenuItem("South America", [
-                new SMItem("Argentina"),
-                new SMItem("Bolivia"),
-                new SMItem("Brasil"),
-                new SMItem("Colombia"),
-                new SMItem("Chile"),
-                new SMItem("Ecuador"),
-                new SMItem("Paraguay"),
+                new SMLabelItem("Argentina"),
+                new SMLabelItem("Bolivia"),
+                new SMLabelItem("Brasil"),
+                new SMLabelItem("Colombia"),
+                new SMLabelItem("Chile"),
+                new SMLabelItem("Ecuador"),
+                new SMLabelItem("Paraguay"),
                 new SMSubMenuItem("Perú", [
-                    new SMItem("Lima"),
-                    new SMItem("Trujillo"),
-                    new SMItem("Loreto"),
-                    new SMItem("Cuzco"),
-                    new SMItem("Puno"),
-                    new SMItem("Cajamarca"),
-                    new SMItem("etc..")
+                    new SMLabelItem("Lima"),
+                    new SMLabelItem("Trujillo"),
+                    new SMLabelItem("Loreto"),
+                    new SMLabelItem("Cuzco"),
+                    new SMLabelItem("Puno"),
+                    new SMLabelItem("Cajamarca"),
+                    new SMLabelItem("etc..")
                 ]),
-                new SMItem("Uruguay")
+                new SMLabelItem("Uruguay")
             ]),
-            new SMItem("Oceanía"),
-            new SMItem("Antartida")
+            new SMLabelItem("Oceanía"),
+            new SMLabelItem("Antartida")
         ]);
 
 
@@ -98,15 +98,10 @@
 
         // Adding new item
         sideMainMenu.addItem(
-            new SMItem("Download")
+            new SMButtonItem("Download File", function(){
+              alert("Go Download File!");
+            })
         );
-
-        // Adding new elements
-        sideMainMenu.addItem(new SMUserAccountItem(
-            "Ana Cueva",
-            "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
-        ), 0 /* index, first element */ );
-
 
         // Adding new item
         sideMainMenu.addItem(
@@ -115,15 +110,44 @@
             })
         );
 
-        /*-------------- Code for demo page ---------------*/
+        // CUSTOM ITEM
+        // This is a custom item example
+        // all created custom items extend from SMItem Class.
+
+        var SMUserAccountItem = (function (name, src) {
+          SMItem.call(this); // Call SMItem constructor
+          // this._el is jQuery item object that works how wrapper
+          this._el.addClass('sm-item-useraccount');
+          this._el.append(
+            this.photo = $('<img/>')
+              .addClass('sm-useraccount-photo')
+              .attr({ src: src })
+          );
+          this._el.append(
+            this.name = $('<div/>')
+              .addClass('sm-useraccount-name')
+              .text(name)
+          );
+        });
+
+        // Extend prototype from SMItem
+        SMUserAccountItem.prototype = Object.create(SMItem.prototype); 
+        SMUserAccountItem.prototype.constructor = SMUserAccountItem;
+
+        // Adding new type item
+        sideMainMenu.addItem(new SMUserAccountItem(
+            "Ana Cueva",
+            "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
+        ), 0 /* index, first element */ );
+
+
+
+        /*-------------- ----------------------------------
+         --------------- DEMO CODE (IGNORE) ---------------*/
 
         var isTouch = "ontouchstart" in document.documentElement,
             evt = isTouch ? 'touchend' : 'click';
         
-        $("body").on(evt, function (e) {
-            e.target === document.body && sideMainMenu.close();
-        });
-
         $("#open-demo").on(evt, function () {
           if (sideMainMenu.isOpen) {
             $(this).text("Open demo")
@@ -138,9 +162,9 @@
             
         });
         
-        isTouch && $(document).on('touchmove', function (e) {
-          e.preventDefault();
-        });
+        // isTouch && $(document).on('touchmove', function (e) {
+        //   e.preventDefault();
+        // });
     });
     
     </script>
@@ -169,46 +193,6 @@
           <button id="add-item">Add Item</button>
           <button id="move-item">Move Item</button>
           <button id="open-submenu">Open Share Submenu</button> -->
-        </section>
-        <section>
-          <h1>Basic API documentation</h1>
-          <h2>SideMenu Class</h2>
-          <p>Class that represent a list menu. this class is parent for SideMenuMain and SideSubMenu SubClases</p>
-          <code>new SideMenu([SMItem,..], options)</code>
-          <ul>
-            <li><code>addItem(SideMenu, index)</code></li>
-            <li><code>addItems([SideMenu,..], index)</code></li>
-          </ul>
-          
-          <h2>SideMainMenu Class</h2>
-          <p>Extend from SideMenu, represent a master menu dom object.</p>
-          <code>new SideMainMenu([SMItem,..], options)</code>
-          <ul>
-            <li><code>appendTo(domTarget)</code></li>
-          </ul>
-
-          <h2>SideSubMenu Class</h2>
-          <p>Extend from SideMenu. SideSubMenu represent a submenu dom object.</p>
-          <code>new SideMainMenu([SMItem,..], options)</code>
-
-          <h2>SMSubMenuItem Class</h2>
-          <p>Extend from SMItem, represent a single item with a submenu child.</p>
-          <code>new SMSubMenuItem("name", [SMItem,..])</code>
-          <ul>
-            <li><code>moveToMenu(SideMenu, index)</code></li>
-          </ul>
-          <h2>SMLinkItem Class</h2>
-          <p>Extend from SMItem, represent a link item.</p>
-          <code>new SMLinkItem("name", "url", "_blank")</code>
-
-          <h2>SMButtonItem Class</h2>
-          <p>Extend from SMItem, represent a action button item.</p>
-          <code>new SMButtonItem("name", onClickHandler)</code>
-
-          <h2>SMUserAccountItem Class</h2>
-          <p>This is a custom item example. All created custom items have to extend from SMItem.</p>
-          <code>new SMUserAccountItem("name", "src")</code>
-              
         </section>
       </div>
     </div>
