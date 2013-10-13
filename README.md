@@ -42,6 +42,8 @@ Class that represent one empty list item. this class is template to create other
 `new SMItem()`
 
 * moveToMenu(SideMenu, index)
+* moveToPosition(index)
+* remove()
 
 #### SMLabelItem Class
 Extend from **SMItem** class, and represent one item with a text title and icon.
