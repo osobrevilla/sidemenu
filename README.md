@@ -28,7 +28,7 @@ Extend from **SideMenu**, represent a master menu dom object.
 
 Extend from **SideMenu**. **SideSubMenu** represent a submenu dom object.
 
-new SideSubMenu([SMItem,..], options)
+`new SideSubMenu([SMItem,..], options)`
 
 #### SMItem Class
 
