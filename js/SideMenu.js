@@ -442,8 +442,8 @@
         });
     });
 
-    SMButtonItem.prototype = Object.create(SMItem.prototype);
-    SMButtonItem.prototype.constructor = SMButtonItem;
+  SMButtonItem.prototype = Object.create(SMLabelItem.prototype);
+  SMButtonItem.prototype.constructor = SMButtonItem;
 
     /* Add to namespace */
 
