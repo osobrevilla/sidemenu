@@ -71,27 +71,20 @@
 
     var Menu = (function (items, options) {
         var that = this;
-        this.options = $.extend({}, Menu.options, options);
+        this.options = {};
+        $.extend(this.options, options);
         this._el = $('<div/>').addClass('sm sm-added');
-        this._list = $('<div/>').appendTo(this._el).get(0);
         this.el = this._el.get(0);
         touchScroll(this.el);
-        this.items = [];
-        this.addItems(items);
-        if (this.options.back)
-            this._back = $('<div/>').addClass('sm-back')
-                .on('click', function (e) {
-                    e.preventDefault();
-                    that.goBack();
-                })
-                .text(this.options.back);
-        this._el.prepend(this._back);
         if (this.options.title)
-            this._el.prepend(
+            this._el.append(
                 $('<div/>')
                 .addClass('sm-title')
                 .text(this.title = this.options.title)
             );
+        this._list = $('<div/>').appendTo(this._el).get(0);
+        this.items = [];
+        this.addItems(items);
         this.isOpen = false;
         this.parentItem = null;
     });
@@ -233,10 +226,6 @@
         }
     });
 
-    Menu.options = ({
-        back: 'back'
-    });
-
     /**
      * Class represent a Side Menu element.
      * @param {Array.<SMItem>} items form the menu.
@@ -327,9 +316,23 @@
      */
 
     var SideSubMenu = (function (items, options) {
-        Menu.apply(this, arguments);
+        var that = this;
+        Menu.call(this, items, $.extend({}, SideSubMenu.options, options));
+        if (this.options.back)
+            this._back = $('<div/>')
+                .addClass('sm-back')
+                .on('click', function (e) {
+                    e.preventDefault();
+                    that.goBack();
+                })
+                .text(this.options.back);
+        this._back.insertBefore(this.el.lastChild);
         this._el.addClass('sm-submenu');
         this.sideMenu = null;
+    });
+
+    SideSubMenu.options = ({
+        back: 'back'
     });
 
     SideSubMenu.prototype = Object.create(Menu.prototype);
@@ -498,7 +501,7 @@
   // Copy to namespace or object scope
   $.extend(this, api);
 
-  // Require
+  // AMD
   if ( typeof define === 'function' && define.amd ) {
     define(['jquery'], function(){ 
       return api; 
