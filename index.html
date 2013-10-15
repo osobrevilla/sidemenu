@@ -11,9 +11,14 @@
     <script type="text/javascript">
     $(function () {
 
+        // Creating the master menu (SideMainMenu)
+        sideMenu = new SideMenu([
+          new SMLabelItem("The First Item Added!")
+        ]);
 
-        /* Items with custom actions */
-        var shareListItem = new SMSubMenuItem("Share", [
+
+        // Adding items with events ("Share")
+        sideMenu.addItem(new SMSubMenuItem("Share", [
             new SMButtonItem("Facebook", function () {
                 window.open('http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location));
             }, "fb"),
@@ -26,11 +31,12 @@
             new SMButtonItem("Pinterest", function () {
                 alert("Pinterest Share");
             }, "pin")
-        ]);
+        ]));
 
 
-        /* Mix Items */
-        var editionsListItem = new SMSubMenuItem("Animals", [
+        // Adding mix items ("Animals")
+        sideMenu.addItem(new SMSubMenuItem("Animals", [
+            new SMLinkItem("Bunny", "https://www.google.com.pe/?#q=Bunny"),
             new SMLinkItem("Tiger", "https://www.google.com.pe/?#q=Tiger"),
             new SMLinkItem("Dog", "https://www.google.com.pe/?#q=Dog"),
             new SMLinkItem("Cat", "https://www.google.com.pe/?#q=Cat", "_blank"),
@@ -46,11 +52,11 @@
             ]),
             new SMLabelItem("Pig"),
             new SMLinkItem("Crocodile", "https://www.google.com.pe/?#q=Crocodile")
-        ]);
+        ]));
 
 
-        /* Simple Label Items */
-        var worldListItem = new SMSubMenuItem("Continents", [
+        // Adding simple label items
+        sideMenu.addItem(new SMSubMenuItem("Continents", [
             new SMLabelItem("Europe"),
             new SMLabelItem("Asia"),
             new SMLabelItem("Africa"),
@@ -81,32 +87,20 @@
             ]),
             new SMLabelItem("Oceanía"),
             new SMLabelItem("Antartida")
-        ]);
-
-
-        // Creating the master menu (SideMainMenu)
-        sideMainMenu = new SideMainMenu([
-            editionsListItem,
-            worldListItem,
-            shareListItem
-        ]);
-
-
-        // Adding MainMenu to DOM Tree
-        sideMainMenu.appendTo('#menu');
+        ]));
 
 
         // Adding new item
-        sideMainMenu.addItem(
+        sideMenu.addItem(
             new SMButtonItem("Download File", function(){
               alert("Go Download File!");
             })
         );
 
         // Adding new item
-        sideMainMenu.addItem(
+        sideMenu.addItem(
             new SMButtonItem("Close", function () {
-                sideMainMenu.close();
+                sideMenu.close();
             })
         );
 
@@ -134,11 +128,15 @@
         SMUserAccountItem.prototype = Object.create(SMItem.prototype); 
         SMUserAccountItem.prototype.constructor = SMUserAccountItem;
 
-        // Adding new type item
-        sideMainMenu.addItem(new SMUserAccountItem(
+        // Adding custom item
+        sideMenu.addItem(new SMUserAccountItem(
           "Ana Cueva",
           "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
         ), 0 /* index, first element */ );
+
+        // Finally add SideMenu object to DOM tree target.
+        sideMenu.appendTo('#menu');
+
 
 
 
@@ -152,12 +150,12 @@
             };
         
         $("#open-demo").one(evt, function () {
-          sideMainMenu.open();
+          sideMenu.open();
           next.call(this);
         });
 
         $("#close-demo").one(evt, function () {
-          sideMainMenu.close();
+          sideMenu.close();
           if (confirm("Test again?")) {
               location.reload();
            } else {
@@ -169,12 +167,12 @@
         });
         
         $("#add-item-1").one(evt, function () {
-            sideMainMenu.addItem(new SMSubMenuItem("Others"));
+            sideMenu.addItem(new SMSubMenuItem("Others"));
             next.call(this);
         });
 
         $("#add-item-2").one(evt, function () {
-           sideMainMenu.getSubMenuByName("others")
+           sideMenu.getSubMenuByName("others")
             .open()
             .addItem(
               new SMLinkItem("Go to google", "http://google.com", "_blank")
@@ -183,33 +181,38 @@
         });
 
         $("#close-item-1").one(evt, function () {
-           sideMainMenu.getSubMenuByName("others").close();
+           sideMenu.getSubMenuByName("others").close();
            next.call(this);
         });
 
         $("#move-item-1").one(evt, function () {
-           sideMainMenu.getItemByName("Animals").moveToPosition(sideMainMenu, sideMainMenu.items.length);
+           sideMenu.getItemByName("Animals").moveToPosition(sideMenu, sideMenu.items.length);
            next.call(this);
         });
 
 
         $("#move-item-2").one(evt, function () {
-          var share = sideMainMenu.getSubMenuByName("Share").open();
-           sideMainMenu.getItemByName("Animals").moveToMenu(share);
+          var share = sideMenu.getSubMenuByName("Share").open();
+           sideMenu.getItemByName("Animals").moveToMenu(share);
            next.call(this);
         });
 
         $("#return-item-1").one(evt, function () {
-           var share = sideMainMenu.getSubMenuByName("Share")
-           share.getItemByName("Animals").moveToMenu(sideMainMenu, 0);
+           var share = sideMenu.getSubMenuByName("Share")
+           share.getItemByName("Animals").moveToMenu(sideMenu, 0);
            share.close();
            next.call(this);
         });
 
         $("#remove-item-1").one(evt, function () {
-           sideMainMenu.getItemByName("Others").remove();
+           sideMenu.getItemByName("Others").remove();
            next.call(this);
         });
+
+        $("#move-item-3").one(evt, function(){
+          sideMenu.getItemByIndex(1).moveToPosition(0);
+          next.call(this);
+        })
     });
     
     </script>
@@ -241,6 +244,7 @@
             <li><button id="move-item-1" disabled>Move Item "Animals" to last position</button></li>
             <li><button id="move-item-2" disabled>Move "Animals" to "Share" SubMenu</button></li>
             <li><button id="return-item-1" disabled>Return "Animals" to main menu in first position</button></li>
+            <li><button id="move-item-3" disabled>Move "User Account" to first position</button></li>
             <li><button id="remove-item-1" disabled>Remove "Others"</button></li>
             <li><button id="close-demo" disabled>Close demo</button></li>
           </ol>
