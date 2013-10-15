@@ -7,7 +7,7 @@ JavaScript library to create side menus with full object oriented way.
 ### Basic API documentation
 #### SideMenu Class
 
-Class that represent a list menu. this class is parent for **SideMenuMain** and **SideSubMenu** SubClases
+Class that represent a list menu. this class is parent for **SideSubMenu** Class
 
 `new SideMenu([SMItem,..], options)`
 
@@ -19,21 +19,22 @@ Class that represent a list menu. this class is parent for **SideMenuMain** and 
 * getItemByIndex(index)
 * getItemByName("Share")
 * getSubMenuByName("Animals")
-
-#### SideMainMenu Class
-
-Extend from **SideMenu**, represent a master menu dom object.
-
-`new SideMainMenu([SMItem,..], options)`
-
-
 * appendTo(domTarget)
 
-#### SideSubMenu Class
+#### SideMenu Class
 
-Extend from **SideMenu**. **SideSubMenu** represent a submenu dom object.
+Represent a submenu dom object.
 
 `new SideSubMenu([SMItem,..], options)`
+
+* addItem(SMItem, index)
+* addItems([SMItem, SMItem,..], index)
+* open()
+* close()
+* toggle()
+* getItemByIndex(index)
+* getItemByName("Share")
+* getSubMenuByName("Animals")
 
 #### SMItem Class
 
