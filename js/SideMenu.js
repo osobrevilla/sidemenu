@@ -484,14 +484,25 @@
 
     /* Add to namespace */
 
-    $.extend(this, {
-        SideMenu: SideMenu,
-        SideSubMenu: SideSubMenu,
-        SMItem: SMItem,
-        SMLabelItem: SMLabelItem,
-        SMSubMenuItem: SMSubMenuItem,
-        SMButtonItem: SMButtonItem,
-        SMLinkItem: SMLinkItem
+  // API exposed
+  var api = ({
+    SideMenu: SideMenu,
+    SideSubMenu: SideSubMenu,
+    SMItem: SMItem,
+    SMLabelItem: SMLabelItem,
+    SMSubMenuItem: SMSubMenuItem,
+    SMButtonItem: SMButtonItem,
+    SMLinkItem: SMLinkItem
+  });
+  
+  // Copy to namespace or object scope
+  $.extend(this, api);
+
+  // Require
+  if ( typeof define === 'function' && define.amd ) {
+    define(['jquery'], function(){ 
+      return api; 
     });
+  }
 
 }.call(this /* window namespace or other ex. utils, helpers, etc*/ , window.jQuery));
