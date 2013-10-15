@@ -195,7 +195,7 @@
                 that._show(function () {
                     currentMenu && currentMenu._closeInChain();
                 });
-            });
+            },25);
             this._setCurrentMenu(this);
             this.sideMenu.history.add(this);
             return this;
