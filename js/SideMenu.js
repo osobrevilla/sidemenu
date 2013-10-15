@@ -48,19 +48,25 @@
         if (!isTouch) {
             return
         }
-        var pos = 0;
-        $(id).on("touchstart", function (event) {
+        var pos = 0,
+        start = function(event){
             var e = event.originalEvent;
             pos = this.scrollTop + e.touches[0].pageY;
-        }).on("touchmove", function (event) {
+        },
+        move = function(event){
             var e = event.originalEvent;
             this.scrollTop = pos - e.touches[0].pageY;
             e.preventDefault();
-        });
+        };
+        $(id).on("touchstart", start).on("touchmove", move);
     });
 
     /**
-     * Class Menu
+     * Class represent a Menu element.
+     * @param {Array.<SMItem>} items form the menu.
+     * @param {Object} options
+     * @constructor
+     * @extends {Object}
      */
 
     var Menu = (function (items, options) {
@@ -232,7 +238,11 @@
     });
 
     /**
-     * Class SideMenu
+     * Class represent a Side Menu element.
+     * @param {Array.<SMItem>} items form the menu.
+     * @param {Object} options
+     * @constructor
+     * @extends {Menu}
      */
 
     var SideMenu = (function (items, options) {
@@ -309,7 +319,11 @@
     });
 
     /**
-     * Class SideSubMenu
+     * Class represent a Sub-Menu in SideMenu instance
+     * @param {Array.<SMItem>} items form the menu.
+     * @param {Object} options
+     * @constructor
+     * @extends {Menu}
      */
 
     var SideSubMenu = (function (items, options) {
@@ -321,8 +335,11 @@
     SideSubMenu.prototype = Object.create(Menu.prototype);
     SideSubMenu.prototype.constructor = SideSubMenu;
 
+
     /**
-     * Class SMItem
+     * Class represent a item in Menu instance
+     * @constructor
+     * @extends {Object}
      */
 
     var SMItem = (function () {
@@ -364,7 +381,11 @@
     });
 
     /**
-     * Class SMLabelItem
+     * Class represent a item type label in SideMenu instance
+     * @param {String} title for item.
+     * @param {String} clsName is CSS className (optional)
+     * @constructor
+     * @extends {SMItem}
      */
 
     var SMLabelItem = (function (title, clsName) {
@@ -385,7 +406,12 @@
     SMLabelItem.prototype.constructor = SMLabelItem;
 
     /**
-     * Class SMSubMenuItem
+     * Class represent a item type label but with a submenu
+     * @param {String} title for item.
+     * @param {Array.<SMItem>} items form the submenu.
+     * @param {String} clsName is CSS className (optional)
+     * @constructor
+     * @extends {SMLabelItem}
      */
 
     var SMSubMenuItem = (function (title, items, clsName) {
@@ -407,7 +433,13 @@
     SMSubMenuItem.prototype.constructor = SMSubMenuItem;
 
     /**
-     * Class SMLinkItem
+     * Class represent a item type link native
+     * @param {String} title
+     * @param {String} url
+     * @param {String} target (optional)
+     * @param {String} clsName is CSS className (optional)
+     * @constructor
+     * @extends {SMLabelItem}
      */
 
     var SMLinkItem = (function (title, url, target, clsName) {
@@ -430,7 +462,12 @@
     SMLinkItem.prototype.constructor = SMLinkItem;
 
     /**
-     * Class SMButtonItem
+     * Class represent a action button item
+     * @param {String} title
+     * @param {Function} callback, when the button is clicked
+     * @param {String} clsName is CSS className (optional)
+     * @constructor
+     * @extends {SMLabelItem}
      */
 
     var SMButtonItem = (function (title, callback, clsName) {
