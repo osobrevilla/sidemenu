@@ -38,8 +38,8 @@
         padding: 1em;
     }
     .sm {
-        -webkit-transition: all 550ms cubic-bezier(.65,.22,0,.98);
-        -moz-transition: all 550ms cubic-bezier(.65,.22,0,.98);
+        -webkit-transition: all 500ms cubic-bezier(.65,.22,0,.98);
+        -moz-transition: all 500ms cubic-bezier(.65,.22,0,.98);
         background: #FFF;
         display: none;
         height: 100%;
@@ -53,10 +53,11 @@
         overflow-y: scroll;
         position: absolute;
         top: 0;
-        transition: all 550ms cubic-bezier(.65,.22,0,.98);
+        transition: all 500ms cubic-bezier(.65,.22,0,.98);
         width: 100%;
         opacity:0;
     }
+
     .sm-main > .sm { display: block; margin: 0; }
     .sm-main > .sm-show { 
         -moz-transform:translate(-100%, 0);

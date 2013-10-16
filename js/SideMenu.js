@@ -4,7 +4,7 @@
  * Released under MIT license
  */
 (function ($, undefined) {
-
+    // 'use strict';
     var isTouch = "ontouchstart" in document.documentElement,
         dummyStyle = document.createElement('div').style,
         vendor = (function () {
@@ -49,15 +49,15 @@
             return
         }
         var pos = 0,
-        start = function(event){
-            var e = event.originalEvent;
-            pos = this.scrollTop + e.touches[0].pageY;
-        },
-        move = function(event){
-            var e = event.originalEvent;
-            this.scrollTop = pos - e.touches[0].pageY;
-            e.preventDefault();
-        };
+            start = function (event) {
+                var e = event.originalEvent;
+                pos = this.scrollTop + e.touches[0].pageY;
+            },
+            move = function (event) {
+                var e = event.originalEvent;
+                this.scrollTop = pos - e.touches[0].pageY;
+                e.preventDefault();
+            };
         $(id).on("touchstart", start).on("touchmove", move);
     });
 
@@ -130,37 +130,35 @@
             });
         },
         _hideSubMenus: function () {
-            if (this.items && this.items.length) {
-                for (var i in this.items) {
-                    if (this.items[i] instanceof SMSubMenuItem) {
-                        this.items[i].subMenu._hide();
-                        arguments.callee.call(this.items[i].subMenu)
-                    }
-                }
-            }
+            if (this.items && this.items.length)
+                for (var i in this.items)
+                    if (this.items[i] instanceof SMSubMenuItem)
+                        this.items[i].subMenu._closeWithChilds();
+
         },
-        _closeInChain: function () {
+        _closeWithChilds: function () {
             this._hide();
-            (function (parentItem) {
-                if (parentItem && parentItem.parent) {
-                    parentItem.parent._hide();
-                    arguments.callee(parentItem.parent.parentItem);
-                }
-            }(this.parentItem));
+            this._hideSubMenus();
         },
-        _openInChain: function () {
-            var parents = [];
+        _closeWithParents: function (except) {
+            except !== this && this._hide();
+            if (this.parentItem && this.parentItem.parent)
+                this.parentItem.parent._closeWithParents(except);
+        },
+        _openParents: function () {
+            this.sideMenu.history.clear();
+            var parentNode = this.el.parentNode,
+                parentsMenus = [];
             (function (parentItem) {
                 if (parentItem && parentItem.parent) {
-                    parents.push(parentItem.parent);
+                    parentsMenus.push(parentItem.parent);
                     arguments.callee(parentItem.parent.parentItem);
                 }
             }(this.parentItem));
-            parents.reverse();
-            this.sideMenu.history.clear();
-            for (var i in parents) {
-                parents[i]._el.insertBefore(this.el);
-                this.sideMenu.history.add(parents[i]);
+            parentsMenus.reverse();
+            for (var i in parentsMenus) {
+                parentNode.insertBefore(parentsMenus[i].el, this.el);
+                this.sideMenu.history.add(parentsMenus[i]);
             }
         },
         addItem: function (menuItem, index) {
@@ -175,33 +173,29 @@
             this._refresh();
             return this;
         },
-        goBack: function () {
-            var toInMenu = this.sideMenu.history.beforeLastStak(),
-                toOutMenu = this.sideMenu.history.pop();
-            this._setCurrentMenu(toInMenu || this.sideMenu);
-            toOutMenu && toOutMenu._hide();
-            toInMenu && toInMenu._show();
-        },
-        open: function (step) {
-            var that = this;
-            if (this.sideMenu.currentMenu === this)
-                return;
-            this._el.appendTo(this._el.parent());
-            var currentMenu = this._getCurrentMenu();
-            !step && this._openInChain();
+        open: function () {
+            if (this.isOpen)
+                return this;
+            var that = this,
+                currentMenu = this._getCurrentMenu();
+            this.el.parentNode.appendChild(this.el);
+            this.isOpen = true;
             setTimeout(function () {
                 currentMenu && currentMenu._hide();
                 that._show(function () {
-                    currentMenu && currentMenu._closeInChain();
+                    currentMenu && currentMenu._closeWithParents(that);
                 });
-            },25);
+            }, 25);
+            this._openParents();
             this._setCurrentMenu(this);
             this.sideMenu.history.add(this);
             return this;
         },
         close: function () {
+            if (!this.isOpen)
+                return this;
             this._getCurrentMenu() === this ?
-                this.goBack() : this._hide();
+                this.sideMenu.goBack() : this._hide();
             if (this.sideMenu.history.isEmpty())
                 this._setCurrentMenu(null);
             return this;
@@ -277,23 +271,17 @@
                 }
             }.call(this, menuItem.subMenu));
         },
-        open: function () {
-            this.history.clear();
-            if (this.currentMenu) {
-                var currentMenu = this.currentMenu;
-                this._show(function () {
-                    this._hideSubMenus();
-                });
-                this._setCurrentMenu(this);
-                this.sideMenu.history.add(this);
-            } else {
-                Menu.prototype.open.call(this);
-            }
+        goBack: function () {
+            var toInMenu = this.history.beforeLastStak(),
+                toOutMenu = this.history.pop();
+            this._setCurrentMenu(toInMenu || this);
+            toOutMenu && toOutMenu._hide();
+            toInMenu && toInMenu._show();
         },
         close: function () {
             this.history.clear();
+            this._closeWithChilds();
             this._setCurrentMenu(null);
-            Menu.prototype.close.call(this);
         },
         appendTo: function (target) {
             this._target = $(target).append(this._el);
@@ -323,7 +311,7 @@
                 .addClass('sm-back')
                 .on('click', function (e) {
                     e.preventDefault();
-                    that.goBack();
+                    that.sideMenu.goBack();
                 })
                 .text(this.options.back);
         this._back.insertBefore(this.el.lastChild);
@@ -337,7 +325,6 @@
 
     SideSubMenu.prototype = Object.create(Menu.prototype);
     SideSubMenu.prototype.constructor = SideSubMenu;
-
 
     /**
      * Class represent a item in Menu instance
@@ -482,30 +469,30 @@
         });
     });
 
-  SMButtonItem.prototype = Object.create(SMLabelItem.prototype);
-  SMButtonItem.prototype.constructor = SMButtonItem;
+    SMButtonItem.prototype = Object.create(SMLabelItem.prototype);
+    SMButtonItem.prototype.constructor = SMButtonItem;
 
     /* Add to namespace */
 
-  // API exposed
-  var api = ({
-    SideMenu: SideMenu,
-    SideSubMenu: SideSubMenu,
-    SMItem: SMItem,
-    SMLabelItem: SMLabelItem,
-    SMSubMenuItem: SMSubMenuItem,
-    SMButtonItem: SMButtonItem,
-    SMLinkItem: SMLinkItem
-  });
-  
-  // Copy to namespace or object scope
-  $.extend(this, api);
-
-  // AMD
-  if ( typeof define === 'function' && define.amd ) {
-    define(['jquery'], function(){ 
-      return api; 
+    // API exposed
+    var api = ({
+        SideMenu: SideMenu,
+        SideSubMenu: SideSubMenu,
+        SMItem: SMItem,
+        SMLabelItem: SMLabelItem,
+        SMSubMenuItem: SMSubMenuItem,
+        SMButtonItem: SMButtonItem,
+        SMLinkItem: SMLinkItem
     });
-  }
+
+    // Copy to namespace or object scope
+    $.extend(this, api);
+
+    // AMD
+    if (typeof define === 'function' && define.amd) {
+        define(['jquery'], function () {
+            return api;
+        });
+    }
 
 }.call(this /* window namespace or other ex. utils, helpers, etc*/ , window.jQuery));
