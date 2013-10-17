@@ -3,7 +3,7 @@
  * Oscar Sobrevilla oscar.sobrevilla@gmail.com
  * Released under MIT license
  */
-(function (undefined) {
+(function () {
 
     // Object.create Polyfill
     if (!Object.create)
@@ -33,6 +33,13 @@
                 };
             }
         }(),
+        onceEvent = function(el, type, fn){
+            var _fn = function(){
+                fn.apply(this, arguments);
+                removeEvent(el, type, _fn);
+            };
+            addEvent(el, type, _fn);
+        },
         removeEvent = function () {
             if (window.removeEventListener) {
                 return function (el, type, fn) {
@@ -63,7 +70,7 @@
             } : function (el, clsName) {
                 if (this.hasClass(el, clsName)) {
                     var reqex = new RegExp(' ' + clsName, 'g');
-                    el.className = el.clsName.replace(reqex, '');
+                    el.className = el.className.replace(reqex, '');
                     return true;
                 }
                 return false;
@@ -126,16 +133,16 @@
 
     /**
      * Class represent a Menu element.
+     * @constructor     
      * @param {Array.<SMItem>} items form the menu.
      * @param {Object} options
-     * @constructor
-     * @extends {Object}
      */
 
     var Menu = (function (items, options) {
         var that = this;
         this.options = {};
         extend(this.options, options);
+        /** @expose */
         this.el = dom.create('div');
         dom.addClass(this.el, 'sm');
         dom.addClass(this.el, 'sm-added');
@@ -149,13 +156,13 @@
         this._list = dom.create('div');
         this.el.appendChild(this._list);
         this.items = [];
-        this.addItems(items);
+        this.addItems(items, null);
         this.isOpen = false;
         this.parentItem = null;
     });
 
-    Menu.prototype = ({
-        constructor: Menu,
+    extend(Menu.prototype, {
+        
         _add: function (menuItem, index) {
             index = index === undefined ? this.items.length : index;
             menuItem._setParent(this);
@@ -179,22 +186,16 @@
         _show: function (callback) {
             this.isOpen = true;
             if (typeof callback == 'function')
-                this._onTransitionEnd(callback);
+                onceEvent(this.el, TRNEND_EV, callback);
             dom.addClass(this.el, 'sm-show');
             return this;
         },
         _hide: function (callback) {
             this.isOpen = false;
+            if (typeof callback == 'function')
+                onceEvent(this.el, TRNEND_EV, callback);
             dom.removeClass(this.el, 'sm-show');
             return this;
-        },
-        _onTransitionEnd: function (callback) {
-            var that = this,
-                _fn = function () {
-                    removeEvent(that.el, TRNEND_EV, _fn);
-                    callback && callback.call(that);
-                };
-            addEvent(this.el, TRNEND_EV, _fn);
         },
         _hideSubMenus: function () {
             if (this.items && this.items.length)
@@ -230,24 +231,28 @@
                 this.sideMenu.history.add(parentsMenus[i]);
             }
         },
+        /** @expose */
         addItem: function (menuItem, index) {
             this._add(menuItem, index);
             this._refresh();
             return this;
         },
+        /** @expose */
         addItems: function (menuItems, index) {
             var i;
             for (i in menuItems)
-                this._add(menuItems[i], index + i);
+                this._add(menuItems[i], !isNaN(index) ? index + i : null);
             this._refresh();
             return this;
         },
+        /** @expose */
         open: function () {
             if (this.isOpen)
                 return this;
             var that = this,
                 currentMenu = this._getCurrentMenu();
             this.el.parentNode.appendChild(this.el);
+            //this.el.offsetLeft;
             setTimeout(function () {
                 currentMenu && currentMenu._hide();
                 that._show(function () {
@@ -261,6 +266,7 @@
             this.sideMenu.history.add(this);
             return this;
         },
+        /** @expose */
         close: function () {
             if (!this.isOpen)
                 return this;
@@ -270,12 +276,16 @@
                 this._setCurrentMenu(null);
             return this;
         },
+        /** @expose */
         toggle: function () {
             this.isOpen ? this.close() : this.open();
         },
+        /** @expose */
         getItemByIndex: function (index) {
             return this.items[index];
-        },
+        }
+        ,
+        /** @expose */
         getItemByName: function (title) {
             var i, reg = new RegExp(title, "gi");
             for (i in this.items) {
@@ -284,6 +294,7 @@
             }
             return null;
         },
+        /** @expose */
         getSubMenuByName: function (title) {
             var item = this.getItemByName(title);
             return item ? item.subMenu : item;
@@ -292,9 +303,9 @@
 
     /**
      * Class represent a Side Menu element.
+     * @constructor     
      * @param {Array.<SMItem>} items form the menu.
      * @param {Object} options
-     * @constructor
      * @extends {Menu}
      */
 
@@ -329,6 +340,7 @@
     SideMenu.prototype = Object.create(Menu.prototype);
     extend(SideMenu.prototype, {
         constructor: SideMenu,
+        /** @override*/
         _add: function (menuItem, index) {
             Menu.prototype._add.call(this, menuItem, index);
             (function (subMenu) {
@@ -341,6 +353,7 @@
                 }
             }.call(this, menuItem.subMenu));
         },
+        /** @expose */
         goBack: function () {
             var toInMenu = this.history.beforeLastStak(),
                 toOutMenu = this.history.pop();
@@ -348,11 +361,13 @@
             toOutMenu && toOutMenu._hide();
             toInMenu && toInMenu._show();
         },
+        /** @expose @override*/
         close: function () {
             this.history.clear();
             this._closeWithChilds();
             this._setCurrentMenu(null);
         },
+        /** @expose */
         appendTo: function (target) {
             if (target)
                 target instanceof window.jQuery ?
@@ -376,9 +391,9 @@
 
     /**
      * Class represent a Sub-Menu in SideMenu instance
+     * @constructor     
      * @param {Array.<SMItem>} items form the menu.
      * @param {Object} options
-     * @constructor
      * @extends {Menu}
      */
 
@@ -409,19 +424,20 @@
     /**
      * Class represent a item in Menu instance
      * @constructor
-     * @extends {Object}
      */
 
     var SMItem = (function () {
+        /** @expose */
         this.el = dom.create('div');
         dom.addClass(this.el, 'sm-item');
         this.parent = null;
     });
     extend(SMItem.prototype, {
-        constructor: SMItem,
+
         _setParent: function (sideMenu) {
             this.parent = sideMenu;
         },
+        /** @expose */
         moveToMenu: function (menuTarget, index) {
             var i, menuItem;
             if (menuTarget instanceof Menu) {
@@ -435,10 +451,12 @@
                 menuTarget.addItem(menuItem, index);
             }
         },
+        /** @expose */
         moveToPosition: function (index) {
             if (this.parent)
                 this.moveToMenu(this.parent, index);
         },
+        /** @expose */
         remove: function () {
             if (this.parent) {
                 var i;
@@ -452,9 +470,9 @@
 
     /**
      * Class represent a item type label in SideMenu instance
+     * @constructor     
      * @param {String} title for item.
      * @param {String} clsName is CSS className (optional)
-     * @constructor
      * @extends {SMItem}
      */
 
@@ -482,10 +500,10 @@
 
     /**
      * Class represent a item type label but with a submenu
+     * @constructor     
      * @param {String} title for item.
      * @param {Array.<SMItem>} items form the submenu.
      * @param {String} clsName is CSS className (optional)
-     * @constructor
      * @extends {SMLabelItem}
      */
 
@@ -509,11 +527,11 @@
 
     /**
      * Class represent a item type link native
+     * @constructor     
      * @param {String} title
      * @param {String} url
      * @param {String} target (optional)
      * @param {String} clsName is CSS className (optional)
-     * @constructor
      * @extends {SMLabelItem}
      */
 
@@ -539,10 +557,10 @@
 
     /**
      * Class represent a action button item
+     * @constructor
      * @param {String} title
      * @param {Function} callback, when the button is clicked
      * @param {String} clsName is CSS className (optional)
-     * @constructor
      * @extends {SMLabelItem}
      */
 
@@ -562,13 +580,13 @@
 
     // API exposed
     var api = ({
-        SideMenu: SideMenu,
-        SideSubMenu: SideSubMenu,
-        SMItem: SMItem,
-        SMLabelItem: SMLabelItem,
-        SMSubMenuItem: SMSubMenuItem,
-        SMButtonItem: SMButtonItem,
-        SMLinkItem: SMLinkItem
+        'SideMenu': SideMenu,
+        'SideSubMenu': SideSubMenu,
+        'SMItem': SMItem,
+        'SMLabelItem': SMLabelItem,
+        'SMSubMenuItem': SMSubMenuItem,
+        'SMButtonItem': SMButtonItem,
+        'SMLinkItem': SMLinkItem
     });
 
     // Copy to namespace or object scope
@@ -576,7 +594,7 @@
 
     // AMD
     if (typeof define === 'function' && define.amd) {
-        define(['jquery'], function () {
+        define(function () {
             return api;
         });
     }

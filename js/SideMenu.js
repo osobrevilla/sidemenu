@@ -113,9 +113,9 @@
         },
         _show: function (callback) {
             this.isOpen = true;
-            this._el.addClass('sm-show');
             if (typeof callback == 'function')
                 this._onTransitionEnd(callback);
+            this._el.addClass('sm-show');
             return this;
         },
         _hide: function (callback) {
@@ -488,11 +488,5 @@
     // Copy to namespace or object scope
     $.extend(this, api);
 
-    // AMD
-    if (typeof define === 'function' && define.amd) {
-        define(['jquery'], function () {
-            return api;
-        });
-    }
 
 }.call(this /* window namespace or other ex. utils, helpers, etc*/ , window.jQuery));
