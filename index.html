@@ -143,8 +143,13 @@
     </script>
   </head>
   <body>
-    <div class="wrapper">
-      <div class="content">
+    <!-- 
+      create div.sm-wrapper first child of body (only for fullpage menu!) 
+      If use sm-main with "position:fixed" the task is more easy, but with
+      old browsers exist problems.
+    -->
+    <div class="sm-wrapper">
+       <article class="content">
         <header>
             <h1>SideMenu.js (beta)</h1>
             <p>JavaScript library to create side menus with full object oriented way.</p>
@@ -173,13 +178,16 @@
             <li><button id="remove-item-1" disabled>Remove "Others"</button></li>
             <li><button id="close-demo" disabled>Close demo</button></li>
           </ol>
-          
         </section>
-      </div>
+      </article>
+
+      <!-- target with class (sm-main) -->
+      <div id="menu" class="sm-main"></div>
+      <!--/ end target-->
+
     </div>
-    <!-- target with class (sm-main) -->
-    <div id="menu" class="sm-main"></div>
-    <!--/ end target-->
+
+    
     <script type="text/javascript">
       $(function(){
 

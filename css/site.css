@@ -3,8 +3,8 @@
     
     /* Demo Page */
     
-    body  {background-color: #EEE; font: 100%/1.5 Arial; -webkit-font-smoothing:antialiased; padding: 1em 2em; }
-    .content { font-size: 80%; text-shadow: 0 1px rgba(255,255,255,.7); color: #333; }
+    body  {background-color: #EEE; font: 100%/1.5 Arial; -webkit-font-smoothing:antialiased; padding: 0; margin: 0; }
+    article { font-size: 80%; text-shadow: 0 1px rgba(255,255,255,.7); color: #333; padding: 2em 4em; }
     code { font-size: 130%;}
 
     /* 
@@ -13,12 +13,17 @@
     ========================================================================== 
     */
     
-    
+    .sm-wrapper { 
+        overflow: hidden;
+        position: absolute;
+        min-height: 100%;
+        width: 100%; 
+    }
     .sm-main {
 
         font-size: 10px;
         height: 100%;
-        position: fixed;
+        position: absolute;
         right: 0;
         top: 0;
         bottom: 0;
