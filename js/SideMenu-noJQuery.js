@@ -3,8 +3,8 @@
  * Oscar Sobrevilla oscar.sobrevilla@gmail.com
  * Released under MIT license
  */
-(function ($, undefined) {
-    
+(function (win, doc) {
+
     // Object.create Polyfill
     if (!Object.create)
         Object.create = (function () {
@@ -15,8 +15,81 @@
             }
         })();
 
-    var isTouch = "ontouchstart" in document.documentElement,
-        dummyStyle = document.createElement('div').style,
+    var isTouch = "ontouchstart" in doc.documentElement,
+        clsList = doc.documentElement.classList,
+        extend = function (target, source) {
+            for (var i in source)
+                target[i] = source[i];
+            return target;
+        },
+        addEvent = function () {
+            if (win.addEventListener) {
+                return function (el, type, fn) {
+                    el.addEventListener(type, fn, false);
+                };
+            } else if (win.attachEvent) {
+                return function (el, type, fn) {
+                    el.attachEvent('on' + type, fn);
+                };
+            }
+        }(),
+        onceEvent = function (el, type, fn) {
+            var _fn = function () {
+                fn.apply(this, arguments);
+                removeEvent(el, type, _fn);
+            };
+            addEvent(el, type, _fn);
+        },
+        removeEvent = function () {
+            if (win.removeEventListener) {
+                return function (el, type, fn) {
+                    el.removeEventListener(type, fn, false);
+                };
+            } else if (win.detachEvent) {
+                return function (el, type, fn) {
+                    el.detachEvent('on' + type, fn);
+                };
+            }
+        }(),
+        dom = {
+            create: function (tag) {
+                return doc.createElement(tag);
+            },
+            addClass: clsList ?
+                function (el, clsName) {
+                    return el.classList.add(clsName);
+            } : function (el, clsName) {
+                if (!this.hasClass(el, clsName)) {
+                    el.className += ' ' + clsName;
+                    return true;
+                }
+            },
+            removeClass: clsList ?
+                function (el, clsName) {
+                    el.classList.remove(clsName);
+            } : function (el, clsName) {
+                if (this.hasClass(el, clsName)) {
+                    var reqex = new RegExp(' ' + clsName, 'g');
+                    el.className = el.className.replace(reqex, '');
+                    return true;
+                }
+                return false;
+            },
+            hasClass: clsList ?
+                function (el, clsName) {
+                    return el.classList.contains(clsName);
+            } : function (el, clsName) {
+                var reqex = new RegExp(clsName, 'g');
+                return el.className ? !! (el.className.match(reqex)) : false;
+            },
+            setText: function (el, text) {
+                while (el.firstChild !== null)
+                    el.removeChild(el.firstChild); // remove all existing content
+                el.appendChild(doc.createTextNode(text));
+            }
+
+        },
+        dummyStyle = dom.create('div').style,
         vendor = (function () {
             var vendors = 't,webkitT,MozT,msT,OT'.split(','),
                 t,
@@ -42,23 +115,20 @@
             };
             return transitionEnd[vendor];
         })(),
-
-        // Scroll Handler for mobile devices
-        touchScroll = (function (id) {
+        touchScroll = (function (el) {
             if (!isTouch) {
                 return
             }
             var pos = 0,
-                start = function (event) {
-                    var e = event.originalEvent;
+                start = function (e) {
                     pos = this.scrollTop + e.touches[0].pageY;
                 },
-                move = function (event) {
-                    var e = event.originalEvent;
+                move = function (e) {
                     this.scrollTop = pos - e.touches[0].pageY;
                     e.preventDefault();
                 };
-            $(id).on("touchstart", start).on("touchmove", move);
+            addEvent(el, "touchstart", start);
+            addEvent(el, "touchmove", move);
         });
 
     /**
@@ -71,26 +141,28 @@
     var Menu = (function (items, options) {
         var that = this;
         this.options = {};
-        $.extend(this.options, options);
-        /** @expose*/
-        this._el = $('<div/>').addClass('sm sm-added');
-        /** @expose*/
-        this.el = this._el.get(0);
+        extend(this.options, options);
+        /** @expose */
+        this.el = dom.create('div');
+        dom.addClass(this.el, 'sm');
+        dom.addClass(this.el, 'sm-added');
         touchScroll(this.el);
-        if (this.options.title)
-            this._el.append(
-                $('<div/>')
-                .addClass('sm-title')
-                .text(this.title = this.options.title)
-            );
-        this._list = $('<div/>').appendTo(this._el).get(0);
+        if (this.options.title) {
+            var domTitle = dom.create('div');
+            dom.addClass(domTitle, 'sm-title');
+            dom.setText(domTitle, this.title = this.options.title);
+            this.el.appendChild(domTitle);
+        }
+        this._list = dom.create('div');
+        this.el.appendChild(this._list);
         this.items = [];
-        this.addItems(items);
+        this.addItems(items, null);
         this.isOpen = false;
         this.parentItem = null;
     });
 
-    $.extend(Menu.prototype, {
+    extend(Menu.prototype, {
+
         _add: function (menuItem, index) {
             index = index === undefined ? this.items.length : index;
             menuItem._setParent(this);
@@ -100,8 +172,7 @@
                 this._list.childNodes[index] : null);
         },
         _refresh: function () {
-           if ( this.sideMenu )
-            this.sideMenu._refresh()
+            this.sideMenu && this.sideMenu._refresh()
         },
         _setParent: function (item_) {
             this.parentItem = item_;
@@ -115,24 +186,18 @@
         _show: function (callback) {
             this.isOpen = true;
             if (typeof callback == 'function')
-                this._onTransitionEnd(callback);
-            this._el.css('z-index', 2);
-            this._el.addClass('sm-show');
+                onceEvent(this.el, TRNEND_EV, callback);
+            this.el.style.zIndex = 2;
+            dom.addClass(this.el, 'sm-show');
             return this;
         },
         _hide: function (callback) {
             this.isOpen = false;
             if (typeof callback == 'function')
-                this._onTransitionEnd(callback);
-            this._el.css('z-index', 1);
-            this._el.removeClass('sm-show');
+                onceEvent(this.el, TRNEND_EV, callback);
+            this.el.style.zIndex = 1;
+            dom.removeClass(this.el, 'sm-show');
             return this;
-        },
-        _onTransitionEnd: function (callback) {
-            var that = this;
-            this._el.one(TRNEND_EV, function (e) {
-                callback && callback.call(that, this, e);
-            });
         },
         _hideSubMenus: function () {
             if (this.items && this.items.length)
@@ -146,9 +211,11 @@
             this._hideSubMenus();
         },
         _closeWithParents: function (except) {
-            except !== this && this._hide();
-            if (this.parentItem && this.parentItem.parent)
-                this.parentItem.parent._closeWithParents(except);
+            if (except && except === this) {} else {
+                this._hide();
+                if (this.parentItem && this.parentItem.parent)
+                    this.parentItem.parent._closeWithParents(except);
+            }
         },
         _openParents: function () {
             this.sideMenu.history.clear();
@@ -162,7 +229,6 @@
             }(this.parentItem));
             parentsMenus.reverse();
             for (var i in parentsMenus) {
-                //parentNode.insertBefore(parentsMenus[i].el, this.el);
                 this.sideMenu.history.add(parentsMenus[i]);
             }
         },
@@ -176,7 +242,7 @@
         addItems: function (menuItems, index) {
             var i;
             for (i in menuItems)
-                this._add(menuItems[i], index + i);
+                this._add(menuItems[i], !isNaN(index) ? index + i : null);
             this._refresh();
             return this;
         },
@@ -187,13 +253,13 @@
             var that = this,
                 currentMenu = this._getCurrentMenu();
             currentMenu && currentMenu._hide(function () {
-                currentMenu._el.css('z-index', '');
+                currentMenu.el.style.zIndex = 0;
             });
             this._show(function () {
-                if (currentMenu)
-                    currentMenu._closeWithParents(this);
+                if (currentMenu) {
+                    currentMenu._closeWithParents(that);
+                }
             });
-
             this._openParents();
             this._setCurrentMenu(this);
             this.sideMenu.history.add(this);
@@ -231,18 +297,16 @@
 
     /**
      * Class represent a Side Menu element.
+     * @constructor
      * @param {Array.<SMItem>} items form the menu.
      * @param {Object} options
-     * @constructor
      * @extends {Menu}
      */
 
     var SideMenu = (function (items, options) {
-        var that = this;
         options = options || {};
         options.back = "";
         Menu.call(this, items, options);
-        /** @expose*/
         this.history = {
             stacks: [],
             clear: function () {
@@ -268,7 +332,7 @@
     });
 
     SideMenu.prototype = Object.create(Menu.prototype);
-    $.extend(SideMenu.prototype, {
+    extend(SideMenu.prototype, {
         constructor: SideMenu,
         /** @override*/
         _add: function (menuItem, index) {
@@ -283,11 +347,6 @@
                 }
             }.call(this, menuItem.subMenu));
         },
-        _refresh: function () {
-            this._target && this._target.append(
-                this._target.find('.sm-added').removeClass('sm-added')
-            );
-        },
         /** @expose */
         goBack: function () {
             var toInMenu = this.history.beforeLastStak(),
@@ -296,7 +355,8 @@
             toOutMenu && toOutMenu._hide();
             toInMenu && toInMenu._show();
         },
-        /** @expose @override */
+        /** @expose 
+            @override */
         close: function () {
             this.history.clear();
             this._closeWithChilds();
@@ -308,33 +368,48 @@
         },
         /** @expose */
         appendTo: function (target) {
-            this._target = $(target).append(this._el);
+            if (target)
+                target instanceof win.jQuery ?
+                    target.append(this.el) : target.appendChild(this.el);
+            this._target = target;
             this._refresh();
             return this;
+        },
+        _refresh: function () {
+            if (this._target) {
+                var els = Array.prototype.slice.call(this._target.getElementsByClassName('sm-added')),
+                    frag = doc.createDocumentFragment();
+                for (var i = 0, el; el = els[i]; i++) {
+                    dom.removeClass(el, 'sm-added');
+                    frag.appendChild(el);
+                }
+                this._target.appendChild(frag);
+            }
         }
     });
 
     /**
      * Class represent a Sub-Menu in SideMenu instance
+     * @constructor
      * @param {Array.<SMItem>} items form the menu.
      * @param {Object} options
-     * @constructor
      * @extends {Menu}
      */
 
     var SideSubMenu = (function (items, options) {
         var that = this;
-        Menu.call(this, items, $.extend({}, SideSubMenu.options, options));
-        if (this.options.back)
-            this._back = $('<div/>')
-                .addClass('sm-back')
-                .on('click', function (e) {
-                    e.preventDefault();
-                    that.sideMenu.goBack();
-                })
-                .text(this.options.back);
-        this._back.insertBefore(this.el.lastChild);
-        this._el.addClass('sm-submenu');
+        Menu.call(this, items, extend(extend({}, SideSubMenu.options), options));
+        if (this.options.back) {
+            this._back = dom.create('div');
+            dom.addClass(this._back, 'sm-back');
+            addEvent(this._back, 'click', function (e) {
+                e.preventDefault();
+                that.sideMenu.goBack();
+            });
+            dom.setText(this._back, this.options.back);
+            this.el.insertBefore(this._back, this.el.lastChild);
+        }
+        dom.addClass(this.el, 'sm-submenu');
         this.sideMenu = null;
     });
 
@@ -348,17 +423,16 @@
     /**
      * Class represent a item in Menu instance
      * @constructor
-     * @extends {Object}
      */
 
     var SMItem = (function () {
-        /** @expose*/
-        this._el = $('<div/>').addClass('sm-item');
-        /** @expose*/
-        this.el = this._el.get(0);
+        /** @expose */
+        this.el = dom.create('div');
+        dom.addClass(this.el, 'sm-item');
         this.parent = null;
     });
-    $.extend(SMItem.prototype, {
+    extend(SMItem.prototype, {
+
         _setParent: function (sideMenu) {
             this.parent = sideMenu;
         },
@@ -385,7 +459,7 @@
         remove: function () {
             if (this.parent) {
                 var i;
-                this._el.remove();
+                this.el.parentNode.removeChild(this.el);
                 for (i in this.parent.items)
                     if (this.parent.items[i] === this)
                         this.parent.items.splice(i, 1);
@@ -395,9 +469,9 @@
 
     /**
      * Class represent a item type label in SideMenu instance
+     * @constructor
      * @param {String} title for item.
      * @param {String} clsName is CSS className (optional)
-     * @constructor
      * @extends {SMItem}
      */
 
@@ -406,13 +480,18 @@
             throw 'Error in SMLabelItem: title param is undefined';
         SMItem.call(this);
         this.title = title;
-        this._el.append(
-            this._label = $('<div/>')
-            .addClass('sm-item-label')
-            .addClass(clsName)
-            .append($('<span/>').addClass('sm-label-icon'))
-            .append($('<span/>').addClass('sm-label-text').text(this.title))
-        );
+        this._label = dom.create('div');
+        dom.addClass(this._label, 'sm-item-label');
+        if (clsName)
+            dom.addClass(this._label, clsName);
+        var icon = dom.create('span'),
+            desc = dom.create('span');
+        dom.addClass(icon, 'sm-label-icon');
+        dom.addClass(desc, 'sm-label-text');
+        dom.setText(desc, this.title);
+        this._label.appendChild(icon);
+        this._label.appendChild(desc);
+        this.el.appendChild(this._label);
     })
 
     SMLabelItem.prototype = Object.create(SMItem.prototype);
@@ -420,18 +499,18 @@
 
     /**
      * Class represent a item type label but with a submenu
+     * @constructor
      * @param {String} title for item.
      * @param {Array.<SMItem>} items form the submenu.
      * @param {String} clsName is CSS className (optional)
-     * @constructor
      * @extends {SMLabelItem}
      */
 
     var SMSubMenuItem = (function (title, items, clsName) {
         var that = this;
         SMLabelItem.call(this, title, clsName);
-        this._el.addClass('sm-item-more');
-        this._label.on('click', function (e) {
+        dom.addClass(this.el, 'sm-item-more');
+        addEvent(this._label, 'click', function (e) {
             e.stopPropagation();
             that.subMenu.open();
         });
@@ -439,7 +518,7 @@
             title: title
         });
         this.subMenu._setParent(this);
-        this._el.append(this.subMenu.el);
+        this.el.appendChild(this.subMenu.el);
     });
 
     SMSubMenuItem.prototype = Object.create(SMLabelItem.prototype);
@@ -459,16 +538,17 @@
         if (!title || !url)
             throw 'Error in SMLinkItem: invalid title or url param';
         SMLabelItem.call(this, title);
-        this._label.replaceWith(
-            $('<a/>', {
-                href: url,
-                target: target
-            })
-            .addClass('sm-item-label')
-            .addClass(clsName)
-            .append(this._label.contents())
-        );
-        this._el.addClass('sm-item-link');
+        var link = dom.create('a');
+        link.href = url;
+        if (target)
+            link.target = target;
+        dom.addClass(link, 'sm-item-label')
+        if (clsName)
+            dom.addClass(link, clsName)
+        while (this._label.hasChildNodes())
+            link.appendChild(this._label.firstChild);
+        this._label.parentNode.replaceChild(link, this._label);
+        dom.addClass(this.el, 'sm-item-link');
     });
 
     SMLinkItem.prototype = Object.create(SMLabelItem.prototype);
@@ -486,8 +566,8 @@
     var SMButtonItem = (function (title, callback, clsName) {
         var that = this;
         SMLabelItem.call(this, title, clsName);
-        this._el.addClass('sm-item-button');
-        this._el.on('click', function (e) {
+        dom.addClass(this.el, 'sm-item-button');
+        addEvent(this.el, 'click', function (e) {
             callback && callback.call(this, e, that);
         });
     });
@@ -497,18 +577,25 @@
 
     /* Add to namespace */
 
-    // API expose
+    // API exposed
     var api = ({
-        SideMenu: SideMenu,
-        SideSubMenu: SideSubMenu,
-        SMItem: SMItem,
-        SMLabelItem: SMLabelItem,
-        SMSubMenuItem: SMSubMenuItem,
-        SMButtonItem: SMButtonItem,
-        SMLinkItem: SMLinkItem
+        'SideMenu': SideMenu,
+        'SideSubMenu': SideSubMenu,
+        'SMItem': SMItem,
+        'SMLabelItem': SMLabelItem,
+        'SMSubMenuItem': SMSubMenuItem,
+        'SMButtonItem': SMButtonItem,
+        'SMLinkItem': SMLinkItem
     });
 
     // Copy to namespace or object scope
-    $.extend(this, api);
+    extend(this, api);
 
-}.call(this /* window namespace or other ex. utils, helpers, etc*/ , window.jQuery));
+    // AMD
+    if (typeof define === 'function' && define.amd) {
+        define(function () {
+            return api;
+        });
+    }
+
+}.call(this /* window namespace or other ex. utils, helpers, etc*/, window, document ));

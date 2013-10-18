@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>SideMenu.js by osobrevilla</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="css/site.css" media="screen" charset="utf-8" />
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/SideMenu.js"></script>
@@ -108,20 +108,20 @@
         // This is a custom item example
         // all created custom items extend from SMItem Class.
 
-        var SMUserAccountItem = (function (name, src) {
+        SMUserAccountItem = (function (name, src) {
           SMItem.call(this); // Call SMItem constructor
           // this._el is jQuery item object that works how wrapper
-          this._el.addClass('sm-item-useraccount');
-          this._el.append(
+          $(this.el).addClass('sm-item-useraccount')
+            .append(
             this.photo = $('<img/>')
               .addClass('sm-useraccount-photo')
-              .attr({ src: src })
-          );
-          this._el.append(
-            this.name = $('<div/>')
-              .addClass('sm-useraccount-name')
-              .text(name)
-          );
+              .attr({ src: src }).get(0)
+            )
+            .append(
+              this.name = $('<div/>')
+                .addClass('sm-useraccount-name')
+                .text(name).get(0)
+            );
         });
 
         // Extend prototype from SMItem
@@ -134,16 +134,22 @@
           "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
         ), 0 /* index, first element */ );
 
+
         // Finally add SideMenu object to DOM tree target.
-        sideMenu.appendTo('#menu');
+        sideMenu.appendTo(document.getElementById('menu'));
 
     });
     
     </script>
   </head>
   <body>
-    <div class="wrapper">
-      <div class="content">
+    <!-- 
+      create div.sm-wrapper first child of body (only for fullpage menu!) 
+      If use sm-main with "position:fixed" the task is more easy, but with
+      old browsers exist problems.
+    -->
+    <div class="sm-wrapper">
+       <article class="content">
         <header>
             <h1>SideMenu.js (beta)</h1>
             <p>JavaScript library to create side menus with full object oriented way.</p>
@@ -172,13 +178,16 @@
             <li><button id="remove-item-1" disabled>Remove "Others"</button></li>
             <li><button id="close-demo" disabled>Close demo</button></li>
           </ol>
-          
         </section>
-      </div>
+      </article>
+
+      <!-- target with class (sm-main) -->
+      <div id="menu" class="sm-main"></div>
+      <!--/ end target-->
+
     </div>
-    <!-- target with class (sm-main) -->
-    <div id="menu" class="sm-main"></div>
-    <!--/ end target-->
+
+    
     <script type="text/javascript">
       $(function(){
 
