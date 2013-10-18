@@ -31,7 +31,6 @@ Represent a submenu dom object.
 * addItems([SMItem, SMItem,..], index)
 * open()
 * close()
-* toggle()
 * getItemByIndex(index)
 * getItemByName("Share")
 * getSubMenuByName("Animals")
