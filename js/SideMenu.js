@@ -114,17 +114,20 @@
         },
         _show: function (callback) {
             this.isOpen = true;
+            this._el.css('z-index', 2);
             if (typeof callback == 'function')
                 this._onTransitionEnd(callback);
-            this._el.css('z-index', 2);
             this._el.addClass('sm-show');
             return this;
         },
         _hide: function (callback) {
+            if (this.isOpen)
+                this._el.css('z-index', 1);
             this.isOpen = false;
-            if (typeof callback == 'function')
-                this._onTransitionEnd(callback);
-            this._el.css('z-index', 1);
+            this._onTransitionEnd(function(){
+                this._el.css('z-index', '');
+                callback && callback.apply(this, arguments);
+            });
             this._el.removeClass('sm-show');
             return this;
         },
@@ -186,14 +189,11 @@
                 return this;
             var that = this,
                 currentMenu = this._getCurrentMenu();
-            currentMenu && currentMenu._hide(function () {
-                currentMenu._el.css('z-index', '');
-            });
+            currentMenu && currentMenu._hide();
             this._show(function () {
                 if (currentMenu)
                     currentMenu._closeWithParents(this);
             });
-
             this._openParents();
             this._setCurrentMenu(this);
             this.sideMenu.history.add(this);

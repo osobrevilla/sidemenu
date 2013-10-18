@@ -35,8 +35,8 @@
         }(),
         onceEvent = function (el, type, fn) {
             var _fn = function () {
-                fn.apply(this, arguments);
                 removeEvent(el, type, _fn);
+                fn.apply(this, arguments);
             };
             addEvent(el, type, _fn);
         },
@@ -185,17 +185,20 @@
         },
         _show: function (callback) {
             this.isOpen = true;
+            this.el.style.zIndex = 2;
             if (typeof callback == 'function')
                 onceEvent(this.el, TRNEND_EV, callback);
-            this.el.style.zIndex = 2;
             dom.addClass(this.el, 'sm-show');
             return this;
         },
         _hide: function (callback) {
-            this.isOpen = false;
-            if (typeof callback == 'function')
-                onceEvent(this.el, TRNEND_EV, callback);
-            this.el.style.zIndex = 1;
+            if (this.isOpen)
+                this.el.style.zIndex = 1;
+            this.isOpen = false;    
+            onceEvent(this.el, TRNEND_EV, function(){
+                this.style.zIndex = '';
+                callback && callback.apply(this, arguments);    
+            });
             dom.removeClass(this.el, 'sm-show');
             return this;
         },
@@ -252,9 +255,7 @@
                 return this;
             var that = this,
                 currentMenu = this._getCurrentMenu();
-            currentMenu && currentMenu._hide(function () {
-                currentMenu.el.style.zIndex = 0;
-            });
+            currentMenu && currentMenu._hide();
             this._show(function () {
                 if (currentMenu) {
                     currentMenu._closeWithParents(that);
