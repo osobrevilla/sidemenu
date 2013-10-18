@@ -13,7 +13,9 @@
     ========================================================================== 
     */
     
+    
     .sm-main {
+
         font-size: 10px;
         height: 100%;
         position: fixed;
@@ -26,6 +28,12 @@
         -o-transform:translate(100%, 0);
         -ms-transform:translate(100%, 0);
         transform:translate(100%, 0);
+
+        -moz-transform:translate3d(100%, 0, 0);
+        -webkit-transform:translate3d(100%, 0, 0);
+        -o-transform:translate3d(100%, 0, 0);
+        -ms-transform:translate3d(100%, 0, 0);
+        transform:translate3d(100%, 0, 0);
         z-index: 1;
     }
     .sm-item-label,.sm a { color: #888; cursor: pointer; text-decoration: none; }
@@ -38,38 +46,42 @@
         padding: 1em;
     }
     .sm {
-        -webkit-transition: all 500ms cubic-bezier(.65,.22,0,.98);
-        -moz-transition: all 500ms cubic-bezier(.65,.22,0,.98);
+        -webkit-transition:-webkit-transform .7s cubic-bezier(.65,.22,0,.98), opacity .7s linear;
+        -moz-transition: -moz-transform .7s cubic-bezier(.65,.22,0,.98), opacity .7s linear;
+        transition: transform .7s cubic-bezier(.65,.22,0,.98), opacity .7s linear;
         background: #FFF;
-        display: none;
         height: 100%;
         left: 0;
-        -moz-transform:translate(100%, 0);
-        -webkit-transform:translate(100%, 0);
-        -ms-transform:translate(100%, 0);
-        -o-transform:translate(100%, 0);
-        transform:translate(100%, 0);
         overflow: hidden;
         overflow-y: scroll;
         position: absolute;
         top: 0;
-        transition: all 500ms cubic-bezier(.65,.22,0,.98);
         width: 100%;
-        opacity:0;
+        z-index: 0;
+
+        -moz-transform:translate3d(0, 0, 0);
+        -webkit-transform:translate3d(0, 0, 0);
+        -ms-transform:translate3d(0, 0, 0);
+        -o-transform:translate3d(0, 0, 0);
+        transform:translate3d(0, 0, 0);
+        opacity: 0;
     }
 
-    .sm-main > .sm { display: block; margin: 0; }
     .sm-main > .sm-show { 
         -moz-transform:translate(-100%, 0);
         -webkit-transform:translate(-100%, 0);
         -ms-transform:translate(-100%, 0);
         -o-transform:translate(-100%, 0);
         transform:translate(-100%, 0);
-        box-shadow: 0 0 11px #bbb; 
+        -moz-transform:translate3d(-100%, 0, 0);
+        -webkit-transform:translate3d(-100%, 0, 0);
+        -ms-transform:translate3d(-100%, 0, 0);
+        -o-transform:translate3d(-100%, 0, 0);
+        transform:translate3d(-100%, 0, 0);
+        box-shadow: 0 0 11px #999;
         opacity: 1;
     }
 
-    .sm-show { margin-left: 0;  }
     .sm ul {
         list-style: none;
         margin: 0;
@@ -86,8 +98,8 @@
         color: #ADADAD;
         top: 0;
         font-family: arial;
-        line-height: 0;
-        padding: .9em;
+        line-height: 1;
+        padding: .36em 0.9em;
         font-weight: 100;
     }
 
@@ -144,9 +156,8 @@
         top: 0;
         font-family: arial;
         font-weight: 100;
-        line-height: 0;
-        padding: .78em .5em;
-        -webkit-font-smoothing: antialiased;
+        line-height: 1;
+        padding: 0.28em 0.5em;
     }
 
     .sm-item-useraccount {

@@ -4,7 +4,17 @@
  * Released under MIT license
  */
 (function ($, undefined) {
-    // 'use strict';
+    
+    // Object.create Polyfill
+    if (!Object.create)
+        Object.create = (function () {
+            function F() {}
+            return function (o) {
+                F.prototype = o
+                return new F()
+            }
+        })();
+
     var isTouch = "ontouchstart" in document.documentElement,
         dummyStyle = document.createElement('div').style,
         vendor = (function () {
@@ -31,49 +41,40 @@
                 'ms': 'MSTransitionEnd'
             };
             return transitionEnd[vendor];
-        })();
+        })(),
 
-    // Object.create Polyfill
-    if (!Object.create)
-        Object.create = (function () {
-            function F() {}
-            return function (o) {
-                F.prototype = o
-                return new F()
+        // Scroll Handler for mobile devices
+        touchScroll = (function (id) {
+            if (!isTouch) {
+                return
             }
-        })();
-
-    // Scroll Handler for mobile devices
-    var touchScroll = (function (id) {
-        if (!isTouch) {
-            return
-        }
-        var pos = 0,
-            start = function (event) {
-                var e = event.originalEvent;
-                pos = this.scrollTop + e.touches[0].pageY;
-            },
-            move = function (event) {
-                var e = event.originalEvent;
-                this.scrollTop = pos - e.touches[0].pageY;
-                e.preventDefault();
-            };
-        $(id).on("touchstart", start).on("touchmove", move);
-    });
+            var pos = 0,
+                start = function (event) {
+                    var e = event.originalEvent;
+                    pos = this.scrollTop + e.touches[0].pageY;
+                },
+                move = function (event) {
+                    var e = event.originalEvent;
+                    this.scrollTop = pos - e.touches[0].pageY;
+                    e.preventDefault();
+                };
+            $(id).on("touchstart", start).on("touchmove", move);
+        });
 
     /**
      * Class represent a Menu element.
+     * @constructor
      * @param {Array.<SMItem>} items form the menu.
      * @param {Object} options
-     * @constructor
-     * @extends {Object}
      */
 
     var Menu = (function (items, options) {
         var that = this;
         this.options = {};
         $.extend(this.options, options);
+        /** @expose*/
         this._el = $('<div/>').addClass('sm sm-added');
+        /** @expose*/
         this.el = this._el.get(0);
         touchScroll(this.el);
         if (this.options.title)
@@ -89,8 +90,7 @@
         this.parentItem = null;
     });
 
-    Menu.prototype = ({
-        constructor: Menu,
+    $.extend(Menu.prototype, {
         _add: function (menuItem, index) {
             index = index === undefined ? this.items.length : index;
             menuItem._setParent(this);
@@ -100,7 +100,8 @@
                 this._list.childNodes[index] : null);
         },
         _refresh: function () {
-            this.sideMenu && this.sideMenu._refresh()
+           if ( this.sideMenu )
+            this.sideMenu._refresh()
         },
         _setParent: function (item_) {
             this.parentItem = item_;
@@ -115,11 +116,15 @@
             this.isOpen = true;
             if (typeof callback == 'function')
                 this._onTransitionEnd(callback);
+            this._el.css('z-index', 2);
             this._el.addClass('sm-show');
             return this;
         },
         _hide: function (callback) {
             this.isOpen = false;
+            if (typeof callback == 'function')
+                this._onTransitionEnd(callback);
+            this._el.css('z-index', 1);
             this._el.removeClass('sm-show');
             return this;
         },
@@ -157,15 +162,17 @@
             }(this.parentItem));
             parentsMenus.reverse();
             for (var i in parentsMenus) {
-                parentNode.insertBefore(parentsMenus[i].el, this.el);
+                //parentNode.insertBefore(parentsMenus[i].el, this.el);
                 this.sideMenu.history.add(parentsMenus[i]);
             }
         },
+        /** @expose */
         addItem: function (menuItem, index) {
             this._add(menuItem, index);
             this._refresh();
             return this;
         },
+        /** @expose */
         addItems: function (menuItems, index) {
             var i;
             for (i in menuItems)
@@ -173,24 +180,26 @@
             this._refresh();
             return this;
         },
+        /** @expose */
         open: function () {
             if (this.isOpen)
                 return this;
             var that = this,
                 currentMenu = this._getCurrentMenu();
-            this.el.parentNode.appendChild(this.el);
-            this.isOpen = true;
-            setTimeout(function () {
-                currentMenu && currentMenu._hide();
-                that._show(function () {
-                    currentMenu && currentMenu._closeWithParents(that);
-                });
-            }, 25);
+            currentMenu && currentMenu._hide(function () {
+                currentMenu._el.css('z-index', '');
+            });
+            this._show(function () {
+                if (currentMenu)
+                    currentMenu._closeWithParents(this);
+            });
+
             this._openParents();
             this._setCurrentMenu(this);
             this.sideMenu.history.add(this);
             return this;
         },
+        /** @expose */
         close: function () {
             if (!this.isOpen)
                 return this;
@@ -200,12 +209,11 @@
                 this._setCurrentMenu(null);
             return this;
         },
-        toggle: function () {
-            this.isOpen ? this.close() : this.open();
-        },
+        /** @expose */
         getItemByIndex: function (index) {
             return this.items[index];
         },
+        /** @expose */
         getItemByName: function (title) {
             var i, reg = new RegExp(title, "gi");
             for (i in this.items) {
@@ -214,6 +222,7 @@
             }
             return null;
         },
+        /** @expose */
         getSubMenuByName: function (title) {
             var item = this.getItemByName(title);
             return item ? item.subMenu : item;
@@ -229,9 +238,11 @@
      */
 
     var SideMenu = (function (items, options) {
+        var that = this;
         options = options || {};
         options.back = "";
         Menu.call(this, items, options);
+        /** @expose*/
         this.history = {
             stacks: [],
             clear: function () {
@@ -259,6 +270,7 @@
     SideMenu.prototype = Object.create(Menu.prototype);
     $.extend(SideMenu.prototype, {
         constructor: SideMenu,
+        /** @override*/
         _add: function (menuItem, index) {
             Menu.prototype._add.call(this, menuItem, index);
             (function (subMenu) {
@@ -271,6 +283,12 @@
                 }
             }.call(this, menuItem.subMenu));
         },
+        _refresh: function () {
+            this._target && this._target.append(
+                this._target.find('.sm-added').removeClass('sm-added')
+            );
+        },
+        /** @expose */
         goBack: function () {
             var toInMenu = this.history.beforeLastStak(),
                 toOutMenu = this.history.pop();
@@ -278,20 +296,21 @@
             toOutMenu && toOutMenu._hide();
             toInMenu && toInMenu._show();
         },
+        /** @expose @override */
         close: function () {
             this.history.clear();
             this._closeWithChilds();
             this._setCurrentMenu(null);
         },
+        /** @expose */
+        toggle: function () {
+            this.history.isEmpty() ? this.open() : this.close();
+        },
+        /** @expose */
         appendTo: function (target) {
             this._target = $(target).append(this._el);
             this._refresh();
             return this;
-        },
-        _refresh: function () {
-            this._target && this._target.append(
-                this._target.find('.sm-added').removeClass('sm-added')
-            );
         }
     });
 
@@ -333,15 +352,17 @@
      */
 
     var SMItem = (function () {
-        this._el = $('<div/>').addClass('sm-item')
+        /** @expose*/
+        this._el = $('<div/>').addClass('sm-item');
+        /** @expose*/
         this.el = this._el.get(0);
         this.parent = null;
     });
     $.extend(SMItem.prototype, {
-        constructor: SMItem,
         _setParent: function (sideMenu) {
             this.parent = sideMenu;
         },
+        /** @expose */
         moveToMenu: function (menuTarget, index) {
             var i, menuItem;
             if (menuTarget instanceof Menu) {
@@ -355,10 +376,12 @@
                 menuTarget.addItem(menuItem, index);
             }
         },
+        /** @expose */
         moveToPosition: function (index) {
             if (this.parent)
                 this.moveToMenu(this.parent, index);
         },
+        /** @expose */
         remove: function () {
             if (this.parent) {
                 var i;
@@ -424,11 +447,11 @@
 
     /**
      * Class represent a item type link native
+     * @constructor
      * @param {String} title
      * @param {String} url
      * @param {String} target (optional)
      * @param {String} clsName is CSS className (optional)
-     * @constructor
      * @extends {SMLabelItem}
      */
 
@@ -453,10 +476,10 @@
 
     /**
      * Class represent a action button item
+     * @constructor
      * @param {String} title
      * @param {Function} callback, when the button is clicked
      * @param {String} clsName is CSS className (optional)
-     * @constructor
      * @extends {SMLabelItem}
      */
 
@@ -474,7 +497,7 @@
 
     /* Add to namespace */
 
-    // API exposed
+    // API expose
     var api = ({
         SideMenu: SideMenu,
         SideSubMenu: SideSubMenu,
@@ -487,6 +510,5 @@
 
     // Copy to namespace or object scope
     $.extend(this, api);
-
 
 }.call(this /* window namespace or other ex. utils, helpers, etc*/ , window.jQuery));

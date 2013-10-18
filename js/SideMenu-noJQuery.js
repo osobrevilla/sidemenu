@@ -3,7 +3,7 @@
  * Oscar Sobrevilla oscar.sobrevilla@gmail.com
  * Released under MIT license
  */
-(function () {
+(function (win, doc) {
 
     // Object.create Polyfill
     if (!Object.create)
@@ -15,37 +15,37 @@
             }
         })();
 
-    var isTouch = "ontouchstart" in document.documentElement,
-        clsList = document.documentElement.classList,
+    var isTouch = "ontouchstart" in doc.documentElement,
+        clsList = doc.documentElement.classList,
         extend = function (target, source) {
             for (var i in source)
                 target[i] = source[i];
             return target;
         },
         addEvent = function () {
-            if (window.addEventListener) {
+            if (win.addEventListener) {
                 return function (el, type, fn) {
                     el.addEventListener(type, fn, false);
                 };
-            } else if (window.attachEvent) {
+            } else if (win.attachEvent) {
                 return function (el, type, fn) {
                     el.attachEvent('on' + type, fn);
                 };
             }
         }(),
-        onceEvent = function(el, type, fn){
-            var _fn = function(){
+        onceEvent = function (el, type, fn) {
+            var _fn = function () {
                 fn.apply(this, arguments);
                 removeEvent(el, type, _fn);
             };
             addEvent(el, type, _fn);
         },
         removeEvent = function () {
-            if (window.removeEventListener) {
+            if (win.removeEventListener) {
                 return function (el, type, fn) {
                     el.removeEventListener(type, fn, false);
                 };
-            } else if (window.detachEvent) {
+            } else if (win.detachEvent) {
                 return function (el, type, fn) {
                     el.detachEvent('on' + type, fn);
                 };
@@ -53,7 +53,7 @@
         }(),
         dom = {
             create: function (tag) {
-                return document.createElement(tag);
+                return doc.createElement(tag);
             },
             addClass: clsList ?
                 function (el, clsName) {
@@ -85,7 +85,7 @@
             setText: function (el, text) {
                 while (el.firstChild !== null)
                     el.removeChild(el.firstChild); // remove all existing content
-                el.appendChild(document.createTextNode(text));
+                el.appendChild(doc.createTextNode(text));
             }
 
         },
@@ -133,7 +133,7 @@
 
     /**
      * Class represent a Menu element.
-     * @constructor     
+     * @constructor
      * @param {Array.<SMItem>} items form the menu.
      * @param {Object} options
      */
@@ -162,7 +162,7 @@
     });
 
     extend(Menu.prototype, {
-        
+
         _add: function (menuItem, index) {
             index = index === undefined ? this.items.length : index;
             menuItem._setParent(this);
@@ -187,6 +187,7 @@
             this.isOpen = true;
             if (typeof callback == 'function')
                 onceEvent(this.el, TRNEND_EV, callback);
+            this.el.style.zIndex = 2;
             dom.addClass(this.el, 'sm-show');
             return this;
         },
@@ -194,6 +195,7 @@
             this.isOpen = false;
             if (typeof callback == 'function')
                 onceEvent(this.el, TRNEND_EV, callback);
+            this.el.style.zIndex = 1;
             dom.removeClass(this.el, 'sm-show');
             return this;
         },
@@ -227,7 +229,6 @@
             }(this.parentItem));
             parentsMenus.reverse();
             for (var i in parentsMenus) {
-                parentNode.insertBefore(parentsMenus[i].el, this.el);
                 this.sideMenu.history.add(parentsMenus[i]);
             }
         },
@@ -251,16 +252,14 @@
                 return this;
             var that = this,
                 currentMenu = this._getCurrentMenu();
-            this.el.parentNode.appendChild(this.el);
-            //this.el.offsetLeft;
-            setTimeout(function () {
-                currentMenu && currentMenu._hide();
-                that._show(function () {
-                    if (currentMenu) {
-                        currentMenu._closeWithParents(that);
-                    }
-                });
-            }, 25);
+            currentMenu && currentMenu._hide(function () {
+                currentMenu.el.style.zIndex = 0;
+            });
+            this._show(function () {
+                if (currentMenu) {
+                    currentMenu._closeWithParents(that);
+                }
+            });
             this._openParents();
             this._setCurrentMenu(this);
             this.sideMenu.history.add(this);
@@ -277,14 +276,9 @@
             return this;
         },
         /** @expose */
-        toggle: function () {
-            this.isOpen ? this.close() : this.open();
-        },
-        /** @expose */
         getItemByIndex: function (index) {
             return this.items[index];
-        }
-        ,
+        },
         /** @expose */
         getItemByName: function (title) {
             var i, reg = new RegExp(title, "gi");
@@ -303,7 +297,7 @@
 
     /**
      * Class represent a Side Menu element.
-     * @constructor     
+     * @constructor
      * @param {Array.<SMItem>} items form the menu.
      * @param {Object} options
      * @extends {Menu}
@@ -361,16 +355,21 @@
             toOutMenu && toOutMenu._hide();
             toInMenu && toInMenu._show();
         },
-        /** @expose @override*/
+        /** @expose 
+            @override */
         close: function () {
             this.history.clear();
             this._closeWithChilds();
             this._setCurrentMenu(null);
         },
         /** @expose */
+        toggle: function () {
+            this.history.isEmpty() ? this.open() : this.close();
+        },
+        /** @expose */
         appendTo: function (target) {
             if (target)
-                target instanceof window.jQuery ?
+                target instanceof win.jQuery ?
                     target.append(this.el) : target.appendChild(this.el);
             this._target = target;
             this._refresh();
@@ -379,7 +378,7 @@
         _refresh: function () {
             if (this._target) {
                 var els = Array.prototype.slice.call(this._target.getElementsByClassName('sm-added')),
-                    frag = document.createDocumentFragment();
+                    frag = doc.createDocumentFragment();
                 for (var i = 0, el; el = els[i]; i++) {
                     dom.removeClass(el, 'sm-added');
                     frag.appendChild(el);
@@ -391,7 +390,7 @@
 
     /**
      * Class represent a Sub-Menu in SideMenu instance
-     * @constructor     
+     * @constructor
      * @param {Array.<SMItem>} items form the menu.
      * @param {Object} options
      * @extends {Menu}
@@ -470,7 +469,7 @@
 
     /**
      * Class represent a item type label in SideMenu instance
-     * @constructor     
+     * @constructor
      * @param {String} title for item.
      * @param {String} clsName is CSS className (optional)
      * @extends {SMItem}
@@ -500,7 +499,7 @@
 
     /**
      * Class represent a item type label but with a submenu
-     * @constructor     
+     * @constructor
      * @param {String} title for item.
      * @param {Array.<SMItem>} items form the submenu.
      * @param {String} clsName is CSS className (optional)
@@ -527,7 +526,7 @@
 
     /**
      * Class represent a item type link native
-     * @constructor     
+     * @constructor
      * @param {String} title
      * @param {String} url
      * @param {String} target (optional)
@@ -599,4 +598,4 @@
         });
     }
 
-}.call(this /* window namespace or other ex. utils, helpers, etc*/ ));
+}.call(this /* window namespace or other ex. utils, helpers, etc*/, window, document ));
