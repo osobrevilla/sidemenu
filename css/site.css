@@ -22,7 +22,6 @@
     .sm-main {
 
         font-size: 10px;
-        height: 100%;
         position: absolute;
         right: 0;
         top: 0;
@@ -58,12 +57,16 @@
         height: 100%;
         left: 0;
         overflow: hidden;
-        overflow-y: scroll;
+        overflow-y: auto;
         position: absolute;
         top: 0;
         width: 100%;
         z-index: 0;
-
+        -moz-transform:translate(0, 0);
+        -webkit-transform:translate(0, 0);
+        -ms-transform:translate(0, 0);
+        -o-transform:translate(0, 0);
+        transform:translate(0, 0);
         -moz-transform:translate3d(0, 0, 0);
         -webkit-transform:translate3d(0, 0, 0);
         -ms-transform:translate3d(0, 0, 0);
