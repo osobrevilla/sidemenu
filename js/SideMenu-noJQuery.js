@@ -164,12 +164,11 @@
     extend(Menu.prototype, {
 
         _add: function (menuItem, index) {
-            index = index === undefined ? this.items.length : index;
             menuItem._setParent(this);
             this.items.splice(index, 0, menuItem);
             this._list.insertBefore(menuItem.el,
                 this._list.hasChildNodes() ?
-                this._list.childNodes[index] : null);
+                this._list.childNodes.item(index) : null);
         },
         _refresh: function () {
             this.sideMenu && this.sideMenu._refresh()
@@ -237,15 +236,17 @@
         },
         /** @expose */
         addItem: function (menuItem, index) {
-            this._add(menuItem, index);
+            this._add(menuItem, index || this.items.length);
             this._refresh();
             return this;
         },
         /** @expose */
         addItems: function (menuItems, index) {
-            var i;
-            for (i in menuItems)
-                this._add(menuItems[i], !isNaN(index) ? index + i : null);
+            if (!menuItems) 
+                return;
+            index = index || this.items.length;
+            for (var i = 0; i < menuItems.length; i+=1)
+                this._add(menuItems[i], index + i);
             this._refresh();
             return this;
         },
