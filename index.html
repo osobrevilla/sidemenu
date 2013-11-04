@@ -130,10 +130,10 @@
         SMUserAccountItem.prototype.constructor = SMUserAccountItem;
 
         // Adding custom item
-        sideMenu.addItem(new SMUserAccountItem(
+        sideMenu.addItems([new SMUserAccountItem(
           "Ana Cueva",
           "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
-        ), 0 /* index, first element */ );
+        )] , 0/* index, first element */ );
 
 
         // Finally add SideMenu object to DOM tree target.

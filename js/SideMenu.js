@@ -170,7 +170,7 @@
         },
         /** @expose */
         addItem: function (menuItem, index) {
-            this._add(menuItem, index || this.items.length);
+            this._add(menuItem, index === undefined ? this.items.length : index);
             this._refresh();
             return this;
         },
@@ -178,7 +178,7 @@
         addItems: function (menuItems, index) {
             if (!menuItems) 
                 return;
-            index = (index || this.items.length) * 1;
+            index = index === undefined ? this.items.length : index;
             for (var i = 0; i < menuItems.length; i+=1)
                 this._add(menuItems[i], index + i);
             this._refresh();
