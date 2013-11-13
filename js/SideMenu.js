@@ -500,12 +500,19 @@
 
     // API expose
     var api = ({
+        /** @expose */
         SideMenu: SideMenu,
+        /** @expose */
         SideSubMenu: SideSubMenu,
+        /** @expose */
         SMItem: SMItem,
+        /** @expose */
         SMLabelItem: SMLabelItem,
+        /** @expose */
         SMSubMenuItem: SMSubMenuItem,
+        /** @expose */
         SMButtonItem: SMButtonItem,
+        /** @expose */
         SMLinkItem: SMLinkItem
     });
 
