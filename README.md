@@ -2,7 +2,7 @@ SideMenu.js
 ===========
 JavaScript library to create side menus with full object oriented way.
 
-[see the demo](http://osobrevilla.github.io/sidemenu.js/)
+[see the demo](http://osobrevilla.github.io/SideMenu.js/)
 
 ## How Use
 
