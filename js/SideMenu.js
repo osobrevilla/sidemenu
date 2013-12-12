@@ -94,9 +94,15 @@
         _add: function (menuItem, index) {
             menuItem._setParent(this);
             this.items.splice(index, 0, menuItem);
-            this._list.insertBefore(menuItem.el,
-                this._list.hasChildNodes() ?
-                this._list.childNodes.item(index) : null);
+            if (this._list.hasChildNodes()) {
+                if (this._list.childNodes[index])
+                    this._list.insertBefore(menuItem.el, this._list.childNodes.item(index))
+                else {
+                    this._list.appendChild(menuItem.el);    
+                }
+            } else {
+                this._list.appendChild(menuItem.el);
+            }
         },
         _refresh: function () {
            if ( this.sideMenu )
