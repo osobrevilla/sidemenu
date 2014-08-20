@@ -3,7 +3,7 @@
  * Oscar Sobrevilla oscar.sobrevilla@gmail.com
  * Released under MIT license
  */
-(function() {
+(function($) {
 
     function create($) {
 
@@ -583,8 +583,8 @@
             return create($);
         });
     } else {
-        if (typeof jQuery)
-            $.extend(window, create(jQuery));
-        else throw "Error: SideMenu require jQuery Library";
+        if ($) {
+            $.extend(window, create($));
+        } else throw "Error: SideMenu require jQuery Library";
     }
-}());
+}(window.jQuery));
