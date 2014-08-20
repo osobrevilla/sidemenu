@@ -584,7 +584,7 @@
         });
     } else {
         if (typeof jQuery)
-            $.extend(window, create($));
+            $.extend(window, create(jQuery));
         else throw "Error: SideMenu require jQuery Library";
     }
 }());
