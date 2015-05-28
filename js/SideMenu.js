@@ -3,6 +3,7 @@
  * Oscar Sobrevilla oscar.sobrevilla@gmail.com
  * Released under MIT license
  */
+
 (function($) {
 
     function create($) {
@@ -60,7 +61,7 @@
                         this.scrollTop = pos - e.touches[0].pageY;
                         e.preventDefault();
                     };
-                $(id).on("touchstart", start).on("touchmove", move);
+                return $(id).on("touchstart", start).on("touchmove", move);
             });
 
         /**
@@ -75,17 +76,17 @@
             this.options = {};
             $.extend(this.options, options);
             /** @expose*/
-            this._el = $('<div/>').addClass('sm sm-added');
+            this.$el = $('<div/>').addClass('sm sm-added');
             /** @expose*/
-            this.el = this._el.get(0);
-            touchScroll(this.el);
+            this.el = this.$el.get(0);
+            this.tscroll = touchScroll(this.el);
             if (this.options.title)
-                this._el.append(
+                this.$el.append(
                     $('<div/>')
                     .addClass('sm-title')
                     .text(this.title = this.options.title)
                 );
-            this._list = $('<div/>').appendTo(this._el).get(0);
+            this.$list = $('<div/>').appendTo(this.$el).get(0);
             this.items = [];
             this.addItems(items);
             this.isOpen = false;
@@ -96,14 +97,14 @@
             _add: function(menuItem, index) {
                 menuItem._setParent(this);
                 this.items.splice(index, 0, menuItem);
-                if (this._list.hasChildNodes()) {
-                    if (this._list.childNodes[index])
-                        this._list.insertBefore(menuItem.el, this._list.childNodes.item(index))
+                if (this.$list.hasChildNodes()) {
+                    if (this.$list.childNodes[index])
+                        this.$list.insertBefore(menuItem.el, this.$list.childNodes.item(index))
                     else {
-                        this._list.appendChild(menuItem.el);
+                        this.$list.appendChild(menuItem.el);
                     }
                 } else {
-                    this._list.appendChild(menuItem.el);
+                    this.$list.appendChild(menuItem.el);
                 }
             },
             _refresh: function() {
@@ -121,26 +122,26 @@
             },
             _show: function(callback) {
                 this.isOpen = true;
-                this._el.css('z-index', 2);
+                this.$el.css('z-index', 2);
                 if (typeof callback == 'function')
                     this._onTransitionEnd(callback);
-                this._el.addClass('sm-show');
+                this.$el.addClass('sm-show');
                 return this;
             },
             _hide: function(callback) {
                 if (this.isOpen)
-                    this._el.css('z-index', 1);
+                    this.$el.css('z-index', 1);
                 this.isOpen = false;
                 this._onTransitionEnd(function() {
-                    this._el.css('z-index', '');
+                    this.$el.css('z-index', '');
                     callback && callback.apply(this, arguments);
                 });
-                this._el.removeClass('sm-show');
+                this.$el.removeClass('sm-show');
                 return this;
             },
             _onTransitionEnd: function(callback) {
                 var that = this;
-                this._el.one(TRNEND_EV, function(e) {
+                this.$el.one(TRNEND_EV, function(e) {
                     callback && callback.call(that, this, e);
                 });
             },
@@ -226,7 +227,7 @@
             },
             /** @expose */
             clear: function() {
-                this._list.innerHTML = "";
+                this.$list.innerHTML = "";
                 this.items = [];
                 return this;
             },
@@ -247,6 +248,14 @@
             getSubMenuByName: function(title) {
                 var item = this.getItemByName(title);
                 return item ? item.subMenu : item;
+            },
+            destroy: function() {
+                var i;
+                this.clear();
+                this.$el.remove();
+                if (this.parentItem){
+                    this.parentItem.items.splice(this.parentItem.items.indexOf(this), 1);
+                }
             }
         });
 
@@ -332,7 +341,7 @@
             },
             /** @expose */
             appendTo: function(target) {
-                this._target = $(target).append(this._el);
+                this._target = $(target).append(this.$el);
                 this._refresh();
                 return this;
             }
@@ -352,13 +361,13 @@
             if (this.options.back)
                 this._back = $('<div/>')
                 .addClass('sm-back')
-                .on('click', function(e) {
+                .on('tapclick', function(e) {
                     e.preventDefault();
                     that.sideMenu.goBack();
                 })
                 .text(this.options.back);
             this._back.insertBefore(this.el.lastChild);
-            this._el.addClass('sm-submenu');
+            this.$el.addClass('sm-submenu');
             this.sideMenu = null;
         });
 
@@ -377,9 +386,9 @@
 
         var SMItem = (function() {
             /** @expose*/
-            this._el = $('<div/>').addClass('sm-item');
+            this.$el = $('<div/>').addClass('sm-item');
             /** @expose*/
-            this.el = this._el.get(0);
+            this.el = this.$el.get(0);
             this.parent = null;
         });
         $.extend(SMItem.prototype, {
@@ -409,7 +418,7 @@
             remove: function() {
                 if (this.parent) {
                     var i;
-                    this._el.remove();
+                    this.$el.remove();
                     for (i in this.parent.items)
                         if (this.parent.items[i] === this)
                             this.parent.items.splice(i, 1);
@@ -432,7 +441,7 @@
             this.title = title;
             this.dom = this.dom || {};
             this.dom.title = $('<span/>').addClass('sm-label-text').text(this.title);
-            this._el.append(
+            this.$el.append(
                 this._label = $('<div/>')
                 .addClass('sm-item-label')
                 .addClass(clsName)
@@ -459,8 +468,8 @@
         var SMSubMenuItem = (function(title, items, clsName) {
             var that = this;
             SMLabelItem.call(this, title, clsName);
-            this._el.addClass('sm-item-more');
-            this._label.on('click', function(e) {
+            this.$el.addClass('sm-item-more');
+            this._label.on('tapclick', function(e) {
                 e.stopPropagation();
                 that.subMenu.open();
             });
@@ -468,7 +477,7 @@
                 title: title
             });
             this.subMenu._setParent(this);
-            this._el.append(this.subMenu.el);
+            this.$el.append(this.subMenu.el);
         });
 
         SMSubMenuItem.prototype = Object.create(SMLabelItem.prototype);
@@ -497,7 +506,7 @@
                 .addClass(clsName)
                 .append(this._label.contents())
             );
-            this._el.addClass('sm-item-link');
+            this.$el.addClass('sm-item-link');
         });
 
         SMLinkItem.prototype = Object.create(SMLabelItem.prototype);
@@ -516,8 +525,8 @@
             var that = this;
             SMLabelItem.call(this, title, clsName);
             this.id = id || null;
-            this._el.addClass('sm-item-button');
-            this._el.on('click', function(e) {
+            this.$el.addClass('sm-item-button');
+            this.$el.on('tapclick', function(e) {
                 callback && callback.call(that, this);
             });
         });
@@ -527,16 +536,16 @@
 
         var SMUserAccountItem = (function(name, src) {
             SMItem.call(this); // Call SMItem constructor
-            // this._el is jQuery item object that works how wrapper
-            this._el.addClass('sm-item-useraccount');
-            this._el.append(
+            // this.$el is jQuery item object that works how wrapper
+            this.$el.addClass('sm-item-useraccount');
+            this.$el.append(
                 this.photo = $('<img/>')
                 .addClass('sm-useraccount-photo')
                 .attr({
                     src: src
                 })
             );
-            this._el.append(
+            this.$el.append(
                 this.name = $('<div/>')
                 .addClass('sm-useraccount-name')
                 .text(name)
@@ -548,9 +557,9 @@
 
         var SMSeparatorItem = (function(name, email) {
             SMItem.call(this); // Call SMItem constructor
-            // this._el is jQuery item object that works how wrapper
-            this._el.addClass('sm-item-separator');
-            this._el.append(
+            // this.$el is jQuery item object that works how wrapper
+            this.$el.addClass('sm-item-separator');
+            this.$el.append(
                 this.name = $('<div/>')
                 .addClass('sm-item-separator-name')
                 .text(name || '')
@@ -588,3 +597,95 @@
         } else throw "Error: SideMenu require jQuery Library";
     }
 }(window.jQuery));
+
+
+// TapClick Hybrid EventHandler 
+// Mouse Click and Touch Events
+
+(function($) {
+
+    var isTouch = 'ontouchstart' in window;
+
+    $.event.special.tapclick = isTouch ? {
+
+        distanceThreshold: 10,
+
+        timeThreshold: 500,
+
+        setup: function() {
+            var that = this,
+                $el = $(this);
+
+            if (this.nodeName == 'A') {
+                this.onclick = function(e) {
+                    e.preventDefault();
+                }
+            }
+
+            function factory(evt) {
+
+                var target = evt.target,
+                    touchStart = evt.originalEvent.touches[0],
+                    startX = touchStart.pageX,
+                    startY = touchStart.pageY,
+                    threshold = $.event.special.tapclick.distanceThreshold,
+                    timeout;
+
+                if (evt.originalEvent.touches.length > 1)
+                    return;
+
+                function _removeEvent() {
+                    clearTimeout(timeout);
+                    $el.off('touchmove', _moveEvent).off('touchend', _tapEvent);
+                    if ($el.attr('role') == 'button') {
+                        $el.removeClass('tapped');
+                    }
+                };
+
+                function _tapEvent(endEvent) {
+                    _removeEvent();
+                    var touches = endEvent.originalEvent.touches;
+                    if (touches && touches.length > 1)
+                        return;
+                    if (target == endEvent.target) {
+                        $.event.simulate('tapclick', that, endEvent);
+                    }
+                };
+
+                function _moveEvent(moveEvent) {
+                    var touchMove = moveEvent.originalEvent.touches[0],
+                        moveX = touchMove.pageX,
+                        moveY = touchMove.pageY;
+
+                    if (Math.abs(moveX - startX) > threshold ||
+                        Math.abs(moveY - startY) > threshold) {
+                        _removeEvent();
+                    }
+                };
+
+                timeout = setTimeout(_removeEvent, $.event.special.tapclick.timeThreshold);
+
+                $el.on('touchmove', _moveEvent).on('touchend', _tapEvent);
+
+                if ($el.attr('role') == 'button') {
+                    $el.addClass('tapped');
+                }
+
+            }
+
+            // Bind touch start
+            $el.on('touchstart', factory);
+        }
+    } : {
+        setup: function() {
+            $(this).on("click", $.event.special.tapclick.click)
+        },
+        click: function(b) {
+            b.type = "tapclick";
+            $.event.dispatch.apply(this, arguments)
+        },
+        teardown: function() {
+            $(this).off("click", $.event.special.tapclick.click)
+        }
+    }
+})(jQuery);
