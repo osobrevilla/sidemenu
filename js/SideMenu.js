@@ -1,5 +1,5 @@
 /*!
- * SideMenu.js v0.1 (beta) ~ Copyright (c) 2013
+ * SideMenu.js v0.2 (beta) ~ Copyright (c) 2013
  * Oscar Sobrevilla oscar.sobrevilla@gmail.com
  * Released under MIT license
  */
