@@ -1,6 +1,6 @@
 SideMenu.js
 ===========
-JavaScript library to create side menus with full object oriented way.
+JavaScript library to create side menus with full object oriented way and touch support.
 
 [see the demo](http://osobrevilla.github.io/SideMenu.js/)
 
@@ -11,6 +11,7 @@ JavaScript library to create side menus with full object oriented way.
 ```
  <link rel="stylesheet" type="text/css" href="css/sidemenu.css" />
  <script src="js/jquery.js"></script>
+ <script src="js/tapclick.js"></script> <!--  (OPTIONAL) FOR FAST TAP EVENT! -->
  <script src="js/SideMenu.js"></script>
 ```
 
