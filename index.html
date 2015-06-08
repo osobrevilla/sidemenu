@@ -8,9 +8,11 @@
     <link rel="stylesheet" type="text/css" href="css/demo.css" media="screen" charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="css/sidemenu.css" media="screen" charset="utf-8" />
     <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/tapclick.js"></script>
     <script type="text/javascript" src="js/SideMenu.js"></script>
     <script type="text/javascript">
-    $(function () {
+
+
 
         // Creating the master menu (SideMenu)
         sideMenu = new SideMenu([
@@ -133,16 +135,15 @@
         sideMenu.addItem(new SMUserAccountItem(
           "Ana Cueva",
           "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
-        ), 0 /* index, first element */ );
+        ), 0 /* index cero, first element */ );
 
 
         // Finally add SideMenu object to DOM tree target.
-        sideMenu.appendTo(document.getElementById('menu'));
-
-    });
-    
+        $(function(){
+            sideMenu.appendTo(document.getElementById('menu'));
+        });
     </script>
-    <script type="text/javascript" src="js/demo.js"></script>
+    
   </head>
   <body>
     <!-- 
@@ -188,5 +189,6 @@
       <!--/ end target-->
 
     </div>
+    <script type="text/javascript" src="js/demo.js"></script>
   </body>
 </html>

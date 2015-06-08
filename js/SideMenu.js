@@ -1,5 +1,5 @@
 /*!
- * SideMenu.js v0.0.1 (beta) ~ Copyright (c) 2013
+ * SideMenu.js v0.1 (beta) ~ Copyright (c) 2013
  * Oscar Sobrevilla oscar.sobrevilla@gmail.com
  * Released under MIT license
  */
@@ -361,7 +361,7 @@
             if (this.options.back)
                 this._back = $('<div/>')
                 .addClass('sm-back')
-                .on('tapclick', function(e) {
+                .on($.event.special.tapclick ? 'tapclick' : 'click', function(e) {
                     e.preventDefault();
                     that.sideMenu.goBack();
                 })
@@ -469,7 +469,7 @@
             var that = this;
             SMLabelItem.call(this, title, clsName);
             this.$el.addClass('sm-item-more');
-            this._label.on('tapclick', function(e) {
+            this._label.on($.event.special.tapclick ? 'tapclick' : 'click', function(e) {
                 e.stopPropagation();
                 that.subMenu.open();
             });
@@ -526,7 +526,7 @@
             SMLabelItem.call(this, title, clsName);
             this.id = id || null;
             this.$el.addClass('sm-item-button');
-            this.$el.on('tapclick', function(e) {
+            this.$el.on($.event.special.tapclick ? 'tapclick' : 'click', function(e) {
                 callback && callback.call(that, this);
             });
         });
@@ -597,95 +597,3 @@
         } else throw "Error: SideMenu require jQuery Library";
     }
 }(window.jQuery));
-
-
-// TapClick Hybrid EventHandler 
-// Mouse Click and Touch Events
-
-(function($) {
-
-    var isTouch = 'ontouchstart' in window;
-
-    $.event.special.tapclick = isTouch ? {
-
-        distanceThreshold: 10,
-
-        timeThreshold: 500,
-
-        setup: function() {
-            var that = this,
-                $el = $(this);
-
-            if (this.nodeName == 'A') {
-                this.onclick = function(e) {
-                    e.preventDefault();
-                }
-            }
-
-            function factory(evt) {
-
-                var target = evt.target,
-                    touchStart = evt.originalEvent.touches[0],
-                    startX = touchStart.pageX,
-                    startY = touchStart.pageY,
-                    threshold = $.event.special.tapclick.distanceThreshold,
-                    timeout;
-
-                if (evt.originalEvent.touches.length > 1)
-                    return;
-
-                function _removeEvent() {
-                    clearTimeout(timeout);
-                    $el.off('touchmove', _moveEvent).off('touchend', _tapEvent);
-                    if ($el.attr('role') == 'button') {
-                        $el.removeClass('tapped');
-                    }
-                };
-
-                function _tapEvent(endEvent) {
-                    _removeEvent();
-                    var touches = endEvent.originalEvent.touches;
-                    if (touches && touches.length > 1)
-                        return;
-                    if (target == endEvent.target) {
-                        $.event.simulate('tapclick', that, endEvent);
-                    }
-                };
-
-                function _moveEvent(moveEvent) {
-                    var touchMove = moveEvent.originalEvent.touches[0],
-                        moveX = touchMove.pageX,
-                        moveY = touchMove.pageY;
-
-                    if (Math.abs(moveX - startX) > threshold ||
-                        Math.abs(moveY - startY) > threshold) {
-                        _removeEvent();
-                    }
-                };
-
-                timeout = setTimeout(_removeEvent, $.event.special.tapclick.timeThreshold);
-
-                $el.on('touchmove', _moveEvent).on('touchend', _tapEvent);
-
-                if ($el.attr('role') == 'button') {
-                    $el.addClass('tapped');
-                }
-
-            }
-
-            // Bind touch start
-            $el.on('touchstart', factory);
-        }
-    } : {
-        setup: function() {
-            $(this).on("click", $.event.special.tapclick.click)
-        },
-        click: function(b) {
-            b.type = "tapclick";
-            $.event.dispatch.apply(this, arguments)
-        },
-        teardown: function() {
-            $(this).off("click", $.event.special.tapclick.click)
-        }
-    }
-})(jQuery);
