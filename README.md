@@ -21,7 +21,7 @@ The menu ("sm-main") will always adapt to its container.
 ```
 <body>
     <div class="sm-wrapper">
-		<div id="menu" class="sm-main"></div> <!-- USE sm-main-left CLASS FOR ALIGN THE MENU TO LEFT SIDE.-->
+		<div id="menu" class="sm-main"></div> <!-- USE ADITIONAL sm-main-left CLASS FOR ALIGN THE MENU TO LEFT SIDE.-->
 	</div>	
 </body>
 
