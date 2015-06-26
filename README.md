@@ -12,7 +12,7 @@ JavaScript library to create side menus with full object oriented way and touch 
  <link rel="stylesheet" type="text/css" href="css/sidemenu.css" />
  <script src="js/jquery.js"></script>
  <script src="js/tapclick.js"></script> <!--  (OPTIONAL) FOR FAST TAP (TOUCH) EVENT! -->
- <script src="js/SideMenu.js"></script>
+ <script src="js/sidemenu.js"></script>
 ```
 
 ####2. Add content and wrapper for menu.
