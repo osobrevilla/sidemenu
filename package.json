@@ -1,0 +1,36 @@
+{
+  "name": "sidemenu",
+  "version": "1.0.0",
+  "description": "\"HTML5 and CSS AsideMenu With Api Full Object Oriented\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osobrevilla/sidemenu.git"
+  },
+  "keywords": [
+    "Menu",
+    "AsideMenu",
+    "HTML5",
+    "JavaScript"
+  ],
+  "author": "Oscar Sobrevilla",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/osobrevilla/sidemenu/issues"
+  },
+  "homepage": "https://github.com/osobrevilla/sidemenu#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "~3.1.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-sass": "~2.1.1",
+    "gulp-sourcemaps": "~1.6.0",
+    "gulp-uglifyjs": "^0.6.2",
+    "gulp-util": "~3.0.6",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
