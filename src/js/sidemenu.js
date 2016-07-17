@@ -65,25 +65,12 @@
             return transitionEnd[vendor];
         })(),
 
-        // Scroll Handler for mobile devices
-        touchScroll = (function(id) {
-            if (!isTouch) {
-                return;
-            }
-            var pos = 0,
-                start = function(event) {
-                    var e = event.originalEvent;
-                    pos = this.scrollTop + e.touches[0].pageY;
-                },
-                move = function(event) {
-                    var e = event.originalEvent;
-                    this.scrollTop = pos - e.touches[0].pageY;
-                    e.preventDefault();
-                };
-            return $(id).on("touchstart", start).on("touchmove", move);
-        });
 
-    var pressEvent = $.event.special.tapclick ? 'tapclick' : 'click';
+    pressEvent = $.event.special.tap ? 'tap' : 'click';
+
+    if (!isTouch){
+    	document.documentElement.className += " sm-desktop";
+    }
 
     /**
      * Class represent a Menu element.
@@ -97,16 +84,26 @@
         $.extend(this.options, options);
         /** @expose*/
         this.$el = $('<div/>').addClass('sm sm-added');
+        this.$body = $('<div/>').addClass('sm-body').appendTo(this.$el);
+        this.$scroller = $('<div/>').addClass('sm-scroller').appendTo(this.$body);
+        this.$content = $('<div/>').addClass('sm-content').appendTo(this.$scroller);
         /** @expose*/
         this.el = this.$el.get(0);
-        //this.tscroll = touchScroll(this.el);
+
+        this.$scroller.on('scroll', function(e){
+        	if (this.scrollHeight - this.scrollTop === this.clientHeight){
+        		e.preventDefault();
+        		this.scrollTop = this.scrollTop - 1;
+        	}
+    		});
+
         if (this.options.title)
-            this.$el.append(
+            this.$content.append(
                 $('<div/>')
                 .addClass('sm-title')
                 .text(this.title = this.options.title)
             );
-        this.$list = $('<div/>').appendTo(this.$el).get(0);
+        this.$list = $('<ul/>').appendTo(this.$content).get(0);
         this.items = [];
         this.addItems(items);
         this.isOpen = false;
@@ -186,8 +183,7 @@
         },
         _openParents: function() {
             this.sideMenu.history.clear();
-            var parentNode = this.el.parentNode,
-                parentsMenus = [];
+            var parentsMenus = [];
             (function(parentItem) {
                 if (parentItem && parentItem.parent) {
                     parentsMenus.push(parentItem.parent);
@@ -220,8 +216,7 @@
         open: function() {
             if (this.isOpen)
                 return this;
-            var that = this,
-                currentMenu = this._getCurrentMenu();
+            var currentMenu = this._getCurrentMenu();
             if (currentMenu)
                 currentMenu._hide();
             this._show(function() {
@@ -275,7 +270,6 @@
             return item ? item.subMenu : item;
         },
         destroy: function() {
-            var i;
             this.clear();
             this.$el.remove();
             if (this.parentItem) {
@@ -293,7 +287,6 @@
      */
 
     var SideMenu = (function(items, options) {
-        var that = this;
         options = options || {};
         options.back = "";
         Menu.call(this, items, options);
@@ -385,16 +378,15 @@
         var that = this;
         Menu.call(this, items, $.extend({}, SideSubMenu.options, options));
         if (this.options.back)
-            this._back = $('<div/>')
+            this._back = $('<li/>')
             .addClass('sm-back')
             .on(pressEvent, function(e) {
-                if (e.originalEvent)
-                    e.preventDefault();
                 e.preventDefault();
                 that.sideMenu.goBack();
             })
             .text(this.options.back);
-        this._back.insertBefore(this.el.lastChild);
+        if(this._back)
+        	this.$content.prepend(this._back);
         this.$el.addClass('sm-submenu');
         this.sideMenu = null;
     });
@@ -414,7 +406,7 @@
 
     var SMItem = (function() {
         /** @expose*/
-        this.$el = $('<div/>').addClass('sm-item');
+        this.$el = $('<li/>').addClass('sm-item');
         /** @expose*/
         this.el = this.$el.get(0);
         this.parent = null;

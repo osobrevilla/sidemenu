@@ -11,7 +11,7 @@ JavaScript library to create side menus with full object oriented way and touch 
 ```
  <link rel="stylesheet" type="text/css" href="dist/css/sidemenu.css" />
  <script src="dist/js/vendors/jquery.js"></script>
- <script src="dist/js/vendors/apclick.js"></script> <!--  (OPTIONAL) FOR FAST TAP (TOUCH) EVENT! -->
+ <script src="dist/js/vendors/jquery.event.tap.js"></script> <!--  (OPTIONAL) FOR FAST TAP (TOUCH) EVENT! -->
  <script src="dist/js/sidemenu.js"></script>
 ```
 
@@ -20,7 +20,6 @@ The menu ("sm-main") will always adapt to its container.
 
 ```
 <body>
-    <div class="sm-wrapper">
 		<div id="menu" class="sm-main"></div> <!-- USE ADITIONAL sm-main-left CLASS FOR ALIGN THE MENU TO LEFT SIDE.-->
 	</div>
 </body>

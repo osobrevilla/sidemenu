@@ -1,10 +1,5 @@
 var gulp = require('gulp'),
   uglify = require('gulp-uglifyjs'),
-
-  // rename = require('gulp-rename'),
-  fs = require('fs'),
-
-  source = require('vinyl-source-stream'),
   buffer = require('vinyl-buffer'),
   sass = require('gulp-sass'),
   sourcemaps = require('gulp-sourcemaps'),
@@ -47,3 +42,10 @@ gulp.task('build:scripts', function(){
     .pipe(uglify())
     .pipe(gulp.dest(__dirname + "/dist/js/"));
 });
+
+gulp.task('watch', function() {
+  gulp.watch(config.scripts_path_watch, ['build:scripts']);
+  gulp.watch(config.sass_path_watch, ['build:sass']);
+});
+
+gulp.task('default', ['build:scripts', 'build:sass', 'watch']);

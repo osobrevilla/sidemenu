@@ -2,7 +2,6 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>SideMenu.js by osobrevilla</title>
     <meta name="viewport" content="width=device-width, user-scalable=no">
 
@@ -10,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="dist/css/sidemenu.css" media="screen" charset="utf-8" />
 
     <script src="dist/js/vendors/jquery.js"></script>
-    <script src="dist/js/vendors/tapclick.js"></script>
+    <script src="dist/js/vendors/jquery.event.tap.js"></script>
     <script src="dist/js/sidemenu.js"></script>
 
     <script>
@@ -151,7 +150,10 @@
       If use sm-main with "position:fixed" the task is more easy, but with
       old browsers exist problems.
     -->
-    <div class="sm-wrapper">
+     <!-- target with class (sm-main) -->
+      <div id="menu" class="sm-main"></div>
+      <!--/ end target-->
+
        <article class="content">
         <header>
             <h1>SideMenu.js (beta)</h1>
@@ -170,25 +172,21 @@
         <section>
           <h1>Demo</h1>
           <ol>
-            <li><button id="open-demo">Open demo</button></li>
-            <li><button id="add-item-1" disabled>Add SubMenu Item</button></li>
-            <li><button id="add-item-2" disabled>Add LinkItem to "Others"</button></li>
-            <li><button id="close-item-1" disabled>Close Menu "Others"</button></li>
-            <li><button id="move-item-1" disabled>Move Item "Animals" to last position</button></li>
-            <li><button id="move-item-2" disabled>Move "Animals" to "Share" SubMenu</button></li>
-            <li><button id="return-item-1" disabled>Return "Animals" to main menu in first position</button></li>
-            <li><button id="move-item-3" disabled>Move "User Account" to first position</button></li>
-            <li><button id="remove-item-1" disabled>Remove "Others"</button></li>
-            <li><button id="close-demo" disabled>Close demo</button></li>
+            <li><button id="open-demo" autocomplete="off">Open demo</button></li>
+            <li><button autocomplete="off" id="add-item-1" disabled>Add SubMenu Item</button></li>
+            <li><button autocomplete="off" id="add-item-2" disabled>Add LinkItem to "Others"</button></li>
+            <li><button autocomplete="off" id="close-item-1" disabled>Close Menu "Others"</button></li>
+            <li><button autocomplete="off" id="move-item-1" disabled>Move Item "Animals" to last position</button></li>
+            <li><button autocomplete="off" id="move-item-2" disabled>Move "Animals" to "Share" SubMenu</button></li>
+            <li><button autocomplete="off" id="return-item-1" disabled>Return "Animals" to main menu in first position</button></li>
+            <li><button autocomplete="off" id="move-item-3" disabled>Move "User Account" to first position</button></li>
+            <li><button autocomplete="off" id="remove-item-1" disabled>Remove "Others"</button></li>
+            <li><button autocomplete="off" id="close-demo" disabled>Close demo</button></li>
           </ol>
         </section>
       </article>
 
-      <!-- target with class (sm-main) -->
-      <div id="menu" class="sm-main"></div>
-      <!--/ end target-->
 
-    </div>
     <script src="dist/js/demo.js"></script>
   </body>
 </html>

@@ -2,11 +2,8 @@
 
 /*SIDEMENU.JS*/
 
-.sm-wrapper
-  overflow: hidden
-  position: absolute
-  min-height: 100%
-  width: 100%
+.disable_
+	ponter-events: none
 
 .sm-main
   font-size: 10px
@@ -14,10 +11,9 @@
   right: 0
   left: auto
   top: 0
-  bottom: 0
+  height: 100%
   width: 260px
   z-index: 1
-
   backface-visibility: hidden
   transform: translate(100%, 0)
   transform: translate3d(100%, 0, 0)
@@ -25,17 +21,13 @@
 .sm-main-left
   right: auto
   left: 0
-  width: 260px
   transform: translate(-100%, 0)
   transform: translate3d(-100%, 0, 0)
 
 .sm
   transition: transform 0.7s cubic-bezier(0.65, 0.22, 0, 0.98), opacity 0.7s linear
-  background: #FFF
   height: 100%
   left: 0
-  overflow: hidden
-  overflow-y: auto
   position: absolute
   top: 0
   width: 100%
@@ -43,6 +35,19 @@
   transform: translate(0, 0)
   transform: translate3d(0, 0, 0)
   opacity: 0
+
+.sm-body
+	background: #FFF
+	height: 100%
+
+.sm-scroller
+	overflow: scroll
+	-webkit-overflow-scrolling: touch
+	height: 100%
+	width: 100%
+
+.sm-content
+	min-height: 110%
 
 .sm-main > .sm-show
   transform: translate(-100%, 0)
@@ -54,9 +59,6 @@
   .sm
     height: 100%
     left: 0
-    overflow: hidden
-    overflow-y: auto
-    position: absolute
     top: 0
     width: 100%
     z-index: 0
@@ -92,13 +94,25 @@
   padding: .36em 0.9em
   font-weight: 100
 
+.sm-content
+	&> ul
+		padding: 0
+		margin: 0
+
+.sm-item
+	list-style: none
+	margin: 0
+
+html.sm-desktop
+	.sm-item-label
+	  &:hover
+	    box-shadow: inset 0 -1px rgba(0, 0, 0, 0)
+	    background: rgba(0, 0, 0, 0.2)
+	    color: #FFF
+	    &::after
+	      color: white
+
 .sm-item-label
-  &:hover
-    box-shadow: inset 0 -1px rgba(0, 0, 0, 0)
-    background: rgba(0, 0, 0, 0.2)
-    color: #FFF
-    &::after
-      color: white
   position: relative
   transition: background .3s,box-shadow .3s
   box-shadow: inset 0 -1px rgba(0, 0, 0, 0.2)
