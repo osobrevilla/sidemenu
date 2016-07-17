@@ -9,10 +9,10 @@ JavaScript library to create side menus with full object oriented way and touch 
 ####1. Add the following files:
 
 ```
- <link rel="stylesheet" type="text/css" href="css/sidemenu.css" />
- <script src="js/jquery.js"></script>
- <script src="js/tapclick.js"></script> <!--  (OPTIONAL) FOR FAST TAP (TOUCH) EVENT! -->
- <script src="js/sidemenu.js"></script>
+ <link rel="stylesheet" type="text/css" href="dist/css/sidemenu.css" />
+ <script src="dist/js/vendors/jquery.js"></script>
+ <script src="dist/js/vendors/apclick.js"></script> <!--  (OPTIONAL) FOR FAST TAP (TOUCH) EVENT! -->
+ <script src="dist/js/sidemenu.js"></script>
 ```
 
 ####2. Add content and wrapper for menu.
@@ -22,11 +22,11 @@ The menu ("sm-main") will always adapt to its container.
 <body>
     <div class="sm-wrapper">
 		<div id="menu" class="sm-main"></div> <!-- USE ADITIONAL sm-main-left CLASS FOR ALIGN THE MENU TO LEFT SIDE.-->
-	</div>	
+	</div>
 </body>
 
 ```
-> **NOTE:** Only for full height menu you need add "sm-wrapper" how first child of body. You can create or use your own custom wrapper with other dimensions or hierarchy but do not forget add ever overflow hidden and position absolute/fixed css style. 
+> **NOTE:** Only for full height menu you need add "sm-wrapper" how first child of body. You can create or use your own custom wrapper with other dimensions or hierarchy but do not forget add ever overflow hidden and position absolute/fixed css style.
 
 ####3. Built and add the menu
 
@@ -83,7 +83,7 @@ myMenu.addItem(
 
 // Finally add SideMenu object to DOM tree target.
 myMenu.appendTo(document.getElementById('menu'));
-        
+
 ```
 
 
@@ -109,7 +109,7 @@ Class that represent a master menu.
 
 Represent a submenu object.
 
- 
+
 ```
     new SideSubMenu([SMItem,..], options);
         .addItem(SMItem, index);
@@ -127,7 +127,7 @@ Class that represent one empty list item. this class is template to create other
     new SMItem();
         .moveToMenu(SideMenu, index);
 		.moveToPosition(index);
-		.remove();		
+		.remove();
 ```
 ###SMLabelItem Class
 Extend from **SMItem** class, and represent one item with a text title and icon.

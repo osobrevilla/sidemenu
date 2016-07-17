@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>SideMenu.js by osobrevilla</title>
     <meta name="viewport" content="width=device-width, user-scalable=no">
-    <link rel="stylesheet" type="text/css" href="css/demo.css" media="screen" charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="css/sidemenu.css" media="screen" charset="utf-8" />
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/tapclick.js"></script>
-    <script type="text/javascript" src="js/sidemenu.js"></script>
-    <script type="text/javascript">
 
+    <link rel="stylesheet" type="text/css" href="dist/css/demo.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="dist/css/sidemenu.css" media="screen" charset="utf-8" />
 
+    <script src="dist/js/vendors/jquery.js"></script>
+    <script src="dist/js/vendors/tapclick.js"></script>
+    <script src="dist/js/sidemenu.js"></script>
 
+    <script>
         // Creating the master menu (SideMenu)
         sideMenu = new SideMenu([
           new SMLabelItem("The First Item Added!")
@@ -48,7 +48,7 @@
                 new SMLabelItem("Hawk"),
                 new SMLabelItem("Tucan"),
                 new SMButtonItem("Parrot", function () {
-                    alert("Hello World!")
+                    alert("Hello World!");
                 }),
                 new SMLabelItem("Chicken"),
                 new SMLabelItem("Duck")
@@ -128,14 +128,14 @@
         });
 
         // Extend prototype from SMItem
-        SMUserAccountItem.prototype = Object.create(SMItem.prototype); 
+        SMUserAccountItem.prototype = Object.create(SMItem.prototype);
         SMUserAccountItem.prototype.constructor = SMUserAccountItem;
 
         // Adding custom item
         sideMenu.addItem(new SMUserAccountItem(
           "Ana Cueva",
           "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
-        ), 0 /* index cero, first element */ );
+        ), 0 /* index zero, first element */ );
 
 
         // Finally add SideMenu object to DOM tree target.
@@ -143,11 +143,11 @@
             sideMenu.appendTo(document.getElementById('menu'));
         });
     </script>
-    
+
   </head>
   <body>
-    <!-- 
-      create div.sm-wrapper first child of body (only for fullpage menu!) 
+    <!--
+      create div.sm-wrapper first child of body (only for fullpage menu!)
       If use sm-main with "position:fixed" the task is more easy, but with
       old browsers exist problems.
     -->
@@ -166,7 +166,7 @@
             <li><a class="buttons github" href="https://github.com/osobrevilla/sidemenu.js">View On GitHub</a></li>
           </ul>
         </section>
-          
+
         <section>
           <h1>Demo</h1>
           <ol>
@@ -189,6 +189,6 @@
       <!--/ end target-->
 
     </div>
-    <script type="text/javascript" src="js/demo.js"></script>
+    <script src="dist/js/demo.js"></script>
   </body>
 </html>
