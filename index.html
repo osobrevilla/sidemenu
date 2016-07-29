@@ -1,196 +1,223 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>SideMenu.js by osobrevilla</title>
-    <meta name="viewport" content="width=device-width, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" href="dist/css/demo.css" media="screen" charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="dist/css/sidemenu.css" media="screen" charset="utf-8" />
+<head>
+	<meta charset="utf-8">
+	<title>SideMenu.js by osobrevilla</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no">
 
-    <script src="dist/js/vendors/jquery.js"></script>
-    <script src="dist/js/vendors/jquery.event.tap.js"></script>
-    <script src="dist/js/sidemenu.js"></script>
+	<link rel="stylesheet" type="text/css" href="dist/css/demo.css" media="screen" charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="dist/css/sidemenu.css" media="screen" charset="utf-8" />
 
-    <script>
-        // Creating the master menu (SideMenu)
-        sideMenu = new SideMenu([
-          new SMLabelItem("The First Item Added!")
-        ]);
+	<script src="dist/js/vendors/jquery.js"></script>
+	<script src="dist/js/vendors/jquery.event.tap.js"></script>
+	<script src="dist/js/sidemenu.js"></script>
 
-
-        // Adding items with events ("Share")
-        sideMenu.addItem(new SMSubMenuItem("Share", [
-            new SMButtonItem("Facebook", function () {
-                window.open('http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location));
-            }, "fb"),
-            new SMButtonItem("Twitter", function () {
-                window.open('https://twitter.com/intent/tweet?text=SideMenu.js&url=' + encodeURIComponent(location));
-            }, "tw"),
-            new SMButtonItem("Google+", function () {
-                window.open('https://plus.google.com/share?hl=es-419&url=' + encodeURIComponent(location));
-            }, "gp"),
-            new SMButtonItem("Pinterest", function () {
-                alert("Pinterest Share");
-            }, "pin")
-        ]));
+	<script>
+		// Creating the master menu (SideMenu)
+		sideMenu = new SideMenu([
+			new SMLabelItem("The First Item Added!")
+		], {
+			overlay: true
+		});
 
 
-        // Adding mix items ("Animals")
-        sideMenu.addItem(new SMSubMenuItem("Animals", [
-            new SMLinkItem("Bunny", "https://www.google.com.pe/?#q=Bunny"),
-            new SMLinkItem("Tiger", "https://www.google.com.pe/?#q=Tiger"),
-            new SMLinkItem("Dog", "https://www.google.com.pe/?#q=Dog"),
-            new SMLinkItem("Cat", "https://www.google.com.pe/?#q=Cat", "_blank"),
-            new SMSubMenuItem("Birds", [
-                new SMLinkItem("Eagle", "https://www.google.com.pe/?#q=eagle"),
-                new SMLabelItem("Hawk"),
-                new SMLabelItem("Tucan"),
-                new SMButtonItem("Parrot", function () {
-                    alert("Hello World!");
-                }),
-                new SMLabelItem("Chicken"),
-                new SMLabelItem("Duck")
-            ]),
-            new SMLabelItem("Pig"),
-            new SMLinkItem("Crocodile", "https://www.google.com.pe/?#q=Crocodile")
-        ]));
+		// Adding items with events ("Share")
+		sideMenu.addItem(new SMSubMenuItem("Share", [
+			new SMButtonItem("Facebook", function() {
+				window.open('http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location));
+			}, "fb"),
+			new SMButtonItem("Twitter", function() {
+				window.open('https://twitter.com/intent/tweet?text=SideMenu.js&url=' + encodeURIComponent(location));
+			}, "tw"),
+			new SMButtonItem("Google+", function() {
+				window.open('https://plus.google.com/share?hl=es-419&url=' + encodeURIComponent(location));
+			}, "gp"),
+			new SMButtonItem("Pinterest", function() {
+				alert("Pinterest Share");
+			}, "pin")
+		]));
 
 
-        // Adding simple label items
-        sideMenu.addItem(new SMSubMenuItem("Continents", [
-            new SMLabelItem("Europe"),
-            new SMLabelItem("Asia"),
-            new SMLabelItem("Africa"),
-            new SMSubMenuItem("North America", [
-                new SMLabelItem("Canada"),
-                new SMLabelItem("Mexico"),
-                new SMLabelItem("United States")
-            ]),
-            new SMLabelItem("Center America"),
-            new SMSubMenuItem("South America", [
-                new SMLabelItem("Argentina"),
-                new SMLabelItem("Bolivia"),
-                new SMLabelItem("Brasil"),
-                new SMLabelItem("Colombia"),
-                new SMLabelItem("Chile"),
-                new SMLabelItem("Ecuador"),
-                new SMLabelItem("Paraguay"),
-                new SMSubMenuItem("Perú", [
-                    new SMLabelItem("Lima"),
-                    new SMLabelItem("Trujillo"),
-                    new SMLabelItem("Loreto"),
-                    new SMLabelItem("Cuzco"),
-                    new SMLabelItem("Puno"),
-                    new SMLabelItem("Cajamarca"),
-                    new SMLabelItem("etc..")
-                ]),
-                new SMLabelItem("Uruguay")
-            ]),
-            new SMLabelItem("Oceanía"),
-            new SMLabelItem("Antartida")
-        ]));
+		// Adding mix items ("Animals")
+		sideMenu.addItem(new SMSubMenuItem("Animals", [
+			new SMLinkItem("Bunny", "https://www.google.com.pe/?#q=Bunny"),
+			new SMLinkItem("Tiger", "https://www.google.com.pe/?#q=Tiger"),
+			new SMLinkItem("Dog", "https://www.google.com.pe/?#q=Dog"),
+			new SMLinkItem("Cat", "https://www.google.com.pe/?#q=Cat", "_blank"),
+			new SMSubMenuItem("Birds", [
+				new SMLinkItem("Eagle", "https://www.google.com.pe/?#q=eagle"),
+				new SMLabelItem("Hawk"),
+				new SMLabelItem("Tucan"),
+				new SMButtonItem("Parrot", function() {
+					alert("Hello World!");
+				}),
+				new SMLabelItem("Chicken"),
+				new SMLabelItem("Duck")
+			]),
+			new SMLabelItem("Pig"),
+			new SMLinkItem("Crocodile", "https://www.google.com.pe/?#q=Crocodile")
+		]));
 
 
-        // Adding new item
-        sideMenu.addItem(
-            new SMButtonItem("Download File", function(){
-              alert("Go Download File!");
-            })
-        );
-
-        // Adding new item
-        sideMenu.addItem(
-            new SMButtonItem("Close", function () {
-                sideMenu.close();
-            })
-        );
-
-        // CUSTOM ITEM
-        // This is a custom item example
-        // all created custom items extend from SMItem Class.
-
-        SMUserAccountItem = (function (name, src) {
-          SMItem.call(this); // Call SMItem constructor
-          // this._el is jQuery item object that works how wrapper
-          $(this.el).addClass('sm-item-useraccount')
-            .append(
-            this.photo = $('<img/>')
-              .addClass('sm-useraccount-photo')
-              .attr({ src: src }).get(0)
-            )
-            .append(
-              this.name = $('<div/>')
-                .addClass('sm-useraccount-name')
-                .text(name).get(0)
-            );
-        });
-
-        // Extend prototype from SMItem
-        SMUserAccountItem.prototype = Object.create(SMItem.prototype);
-        SMUserAccountItem.prototype.constructor = SMUserAccountItem;
-
-        // Adding custom item
-        sideMenu.addItem(new SMUserAccountItem(
-          "Ana Cueva",
-          "https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
-        ), 0 /* index zero, first element */ );
+		// Adding simple label items
+		sideMenu.addItem(new SMSubMenuItem("Continents", [
+			new SMLabelItem("Europe"),
+			new SMLabelItem("Asia"),
+			new SMLabelItem("Africa"),
+			new SMSubMenuItem("North America", [
+				new SMLabelItem("Canada"),
+				new SMLabelItem("Mexico"),
+				new SMLabelItem("United States")
+			]),
+			new SMLabelItem("Center America"),
+			new SMSubMenuItem("South America", [
+				new SMLabelItem("Argentina"),
+				new SMLabelItem("Bolivia"),
+				new SMLabelItem("Brasil"),
+				new SMLabelItem("Colombia"),
+				new SMLabelItem("Chile"),
+				new SMLabelItem("Ecuador"),
+				new SMLabelItem("Paraguay"),
+				new SMSubMenuItem("Perú", [
+					new SMLabelItem("Lima"),
+					new SMLabelItem("Trujillo"),
+					new SMLabelItem("Loreto"),
+					new SMLabelItem("Cuzco"),
+					new SMLabelItem("Puno"),
+					new SMLabelItem("Cajamarca"),
+					new SMLabelItem("etc..")
+				]),
+				new SMLabelItem("Uruguay")
+			]),
+			new SMLabelItem("Oceanía"),
+			new SMLabelItem("Antartida")
+		]));
 
 
-        // Finally add SideMenu object to DOM tree target.
-        $(function(){
-            sideMenu.appendTo(document.getElementById('menu'));
-        });
-    </script>
+		// Adding new item
+		sideMenu.addItem(
+			new SMButtonItem("Download File", function() {
+				alert("Go Download File!");
+			})
+		);
 
-  </head>
-  <body>
-    <!--
+		// Adding new item
+		sideMenu.addItem(
+			new SMButtonItem("Close", function() {
+				sideMenu.close();
+			})
+		);
+
+		// CUSTOM ITEM
+		// This is a custom item example
+		// all created custom items extend from SMItem Class.
+
+		SMUserAccountItem = (function(name, src) {
+			SMItem.call(this); // Call SMItem constructor
+			// this._el is jQuery item object that works how wrapper
+			$(this.el).addClass('sm-item-useraccount')
+				.append(
+					this.photo = $('<img/>')
+					.addClass('sm-useraccount-photo')
+					.attr({
+						src: src
+					}).get(0)
+				)
+				.append(
+					this.name = $('<div/>')
+					.addClass('sm-useraccount-name')
+					.text(name).get(0)
+				);
+		});
+
+		// Extend prototype from SMItem
+		SMUserAccountItem.prototype = Object.create(SMItem.prototype);
+		SMUserAccountItem.prototype.constructor = SMUserAccountItem;
+
+		// Adding custom item
+		sideMenu.addItem(new SMUserAccountItem(
+			"Ana Cueva",
+			"https://dl.dropboxusercontent.com/u/30078937/sidemenu-foto.jpg"
+		), 0 /* index zero, first element */ );
+
+
+		// Finally add SideMenu object to DOM tree target.
+		$(function() {
+			sideMenu.appendTo(document.getElementById('menu'));
+		});
+	</script>
+
+</head>
+
+<body>
+	<!--
       create div.sm-wrapper first child of body (only for fullpage menu!)
       If use sm-main with "position:fixed" the task is more easy, but with
       old browsers exist problems.
     -->
-     <!-- target with class (sm-main) -->
-      <div id="menu" class="sm-main"></div>
-      <!--/ end target-->
-
-       <article class="content">
-        <header>
-            <h1>SideMenu.js (beta)</h1>
-            <p>JavaScript library to create side menus with full object oriented way.</p>
-            <p>This project is maintained by <a href="https://github.com/osobrevilla">osobrevilla</a></p>
-        </header>
-        <section>
-          <h1>Downloads</h1>
-          <ul>
-            <li class="download"><a class="buttons" href="https://github.com/osobrevilla/sidemenu.js/zipball/master">Download ZIP</a></li>
-            <li class="download"><a class="buttons" href="https://github.com/osobrevilla/sidemenu.js/tarball/master">Download TAR</a></li>
-            <li><a class="buttons github" href="https://github.com/osobrevilla/sidemenu.js">View On GitHub</a></li>
-          </ul>
-        </section>
-
-        <section>
-          <h1>Demo</h1>
-          <ol>
-            <li><button id="open-demo" autocomplete="off">Open demo</button></li>
-            <li><button autocomplete="off" id="add-item-1" disabled>Add SubMenu Item</button></li>
-            <li><button autocomplete="off" id="add-item-2" disabled>Add LinkItem to "Others"</button></li>
-            <li><button autocomplete="off" id="close-item-1" disabled>Close Menu "Others"</button></li>
-            <li><button autocomplete="off" id="move-item-1" disabled>Move Item "Animals" to last position</button></li>
-            <li><button autocomplete="off" id="move-item-2" disabled>Move "Animals" to "Share" SubMenu</button></li>
-            <li><button autocomplete="off" id="return-item-1" disabled>Return "Animals" to main menu in first position</button></li>
-            <li><button autocomplete="off" id="move-item-3" disabled>Move "User Account" to first position</button></li>
-            <li><button autocomplete="off" id="remove-item-1" disabled>Remove "Others"</button></li>
-            <li><button autocomplete="off" id="close-demo" disabled>Close demo</button></li>
-          </ol>
-          <h2>Toggle Open<h2>
-          <ul>
-            <li><button onclick="sideMenu.toggle()">Toggle</button></li>
-          </ul>
-        </section>
-      </article>
+	<!-- target with class (sm-main) -->
+	<div id="menu" class="sm-main"></div>
+	<!--/ end target-->
+	<div class="page">
 
 
+		<header>
+			<h1>SideMenu.js (beta)</h1>
+			<p>JavaScript library to create side menus with full object oriented way.</p>
+			<p>This project is maintained by <a href="https://github.com/osobrevilla">osobrevilla</a></p>
+		</header>
+
+		<article class="content">
+
+
+
+			<h2>Downloads</h2>
+			<ul>
+				<li class="download"><a class="buttons" href="https://github.com/osobrevilla/sidemenu.js/zipball/master">Download ZIP</a></li>
+				<li class="download"><a class="buttons" href="https://github.com/osobrevilla/sidemenu.js/tarball/master">Download TAR</a></li>
+				<li><a class="buttons github" href="https://github.com/osobrevilla/sidemenu.js">View On GitHub</a></li>
+			</ul>
+
+			<h2>API demo</h2>
+			<ol>
+				<li>
+					<button id="open-demo" autocomplete="off">Open demo</button>
+				</li>
+				<li>
+					<button autocomplete="off" id="add-item-1" disabled>Add SubMenu Item</button>
+				</li>
+				<li>
+					<button autocomplete="off" id="add-item-2" disabled>Add LinkItem to "Others"</button>
+				</li>
+				<li>
+					<button autocomplete="off" id="close-item-1" disabled>Close Menu "Others"</button>
+				</li>
+				<li>
+					<button autocomplete="off" id="move-item-1" disabled>Move Item "Animals" to last position</button>
+				</li>
+				<li>
+					<button autocomplete="off" id="move-item-2" disabled>Move "Animals" to "Share" SubMenu</button>
+				</li>
+				<li>
+					<button autocomplete="off" id="return-item-1" disabled>Return "Animals" to main menu in first position</button>
+				</li>
+				<li>
+					<button autocomplete="off" id="move-item-3" disabled>Move "User Account" to first position</button>
+				</li>
+				<li>
+					<button autocomplete="off" id="remove-item-1" disabled>Remove "Others"</button>
+				</li>
+				<li>
+					<button autocomplete="off" id="close-demo" disabled>Close demo</button>
+				</li>
+			</ol>
+			<h2>Toggle Open/Close<h2>
+      <ul>
+        <li><button type="button" onclick="sideMenu.toggle()" name="button">Toggle</button></li>
+      </ul>
+</article>
+</div>
     <script src="dist/js/demo.js"></script>
   </body>
 </html>
