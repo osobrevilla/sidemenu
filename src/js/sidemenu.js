@@ -28,16 +28,6 @@
 	}
 }(this, function($) {
 	'use strict';
-	// Object.create Polyfill
-	if (!Object.create)
-		Object.create = (function() {
-			function F() {}
-			return function(o) {
-				F.prototype = o;
-				return new F();
-			};
-		})();
-
 	var isTouch = !!('ontouchstart' in window || navigator.maxTouchPoints),
 		dummyStyle = document.createElement('div').style,
 		vendor = (function() {
