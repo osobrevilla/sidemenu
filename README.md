@@ -4,7 +4,7 @@ JavaScript library to create side menus with full object oriented way and touch 
 
 [see the demo](http://osobrevilla.github.io/sidemenu/)
 
-![SideMenu](http://osobrevilla.github.io/sidemenu/demo/sidemenu.jpg)
+![SideMenu](http://osobrevilla.github.io/sidemenu/demo/sidemenu.jpg?v1)
 
 
 ## How Use
