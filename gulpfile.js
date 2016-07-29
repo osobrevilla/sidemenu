@@ -1,51 +1,69 @@
 var gulp = require('gulp'),
-  uglify = require('gulp-uglifyjs'),
-  buffer = require('vinyl-buffer'),
-  sass = require('gulp-sass'),
-  sourcemaps = require('gulp-sourcemaps'),
-  autoprefixer = require('gulp-autoprefixer'),
-  gutil = require('gulp-util');
+	uglify = require('gulp-uglifyjs'),
+	buffer = require('vinyl-buffer'),
+	sass = require('gulp-sass'),
+	sourcemaps = require('gulp-sourcemaps'),
+	autoprefixer = require('gulp-autoprefixer'),
+	connect = require('gulp-connect'),
+	open = require('gulp-open'),
+	gutil = require('gulp-util');
 
 
 var config = {
-  sass_path_watch: ['src/sass/*.sass', 'src/sass/**/*.sass'],
-  sass_path_from: 'src/sass/*.sass',
-  scripts_path_watch: ['src/js/*.js', 'src/js/**/*.js'],
-  scripts_path_from: ['src/js/*.js'],
+	sass_path_watch: ['src/sass/*.sass', 'src/sass/**/*.sass'],
+	sass_path_from: 'src/sass/*.sass',
+	scripts_path_watch: ['src/js/*.js', 'src/js/**/*.js'],
+	scripts_path_from: ['src/js/*.js'],
 };
 
 
 gulp.task('build:sass', function() {
-  return gulp.src(config.sass_path_from)
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', function(err) {
-      var displayErr = gutil.colors.red(err);
-      gutil.log(displayErr);
-      gutil.beep();
-      this.emit('end');
-    }))
-    .pipe(autoprefixer({
-      browsers: ['last 3 versions'],
-      cascade: false
-    }))
-    .pipe(sass({
-      outputStyle: 'compressed'
-    }).on('error', sass.logError))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('dist/css'));
-  //.pipe(gulp.dest(conf.sass_path_dest + '/tmp'));
+	return gulp.src(config.sass_path_from)
+		.pipe(sourcemaps.init())
+		.pipe(sass().on('error', function(err) {
+			var displayErr = gutil.colors.red(err);
+			gutil.log(displayErr);
+			gutil.beep();
+			this.emit('end');
+		}))
+		.pipe(autoprefixer({
+			browsers: ['last 3 versions'],
+			cascade: false
+		}))
+		.pipe(sass({
+			outputStyle: 'compressed'
+		}).on('error', sass.logError))
+		.pipe(sourcemaps.write('.'))
+		.pipe(gulp.dest('dist/css'));
+	//.pipe(gulp.dest(conf.sass_path_dest + '/tmp'));
 });
 
-gulp.task('build:scripts', function(){
-  return gulp.src(config.scripts_path_from)
-    .pipe(buffer())
-    .pipe(uglify())
-    .pipe(gulp.dest(__dirname + "/dist/js/"));
+gulp.task('build:scripts', function() {
+	return gulp.src(config.scripts_path_from)
+		.pipe(buffer())
+		.pipe(uglify())
+		.pipe(gulp.dest(__dirname + "/dist/js/"));
 });
 
 gulp.task('watch', function() {
-  gulp.watch(config.scripts_path_watch, ['build:scripts']);
-  gulp.watch(config.sass_path_watch, ['build:sass']);
+	gulp.watch(config.scripts_path_watch, ['build:scripts']);
+	gulp.watch(config.sass_path_watch, ['build:sass']);
 });
 
-gulp.task('default', ['build:scripts', 'build:sass', 'watch']);
+gulp.task('connect', function() {
+	connect.server({
+		root: './',
+		port: 8080,
+		livereload: true
+	});
+});
+
+gulp.task('open', function() {
+	var options = {
+		uri: 'http://localhost:8080'
+	};
+	gulp.src(__filename)
+		.pipe(open(options));
+});
+
+gulp.task('default', ['build:scripts', 'build:sass', 'watch', 'connect', 'open']);

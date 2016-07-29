@@ -41,13 +41,9 @@
 	height: 100%
 
 .sm-scroller
-	overflow: scroll
-	-webkit-overflow-scrolling: touch
+	overflow-y: auto
 	height: 100%
 	width: 100%
-
-.sm-content
-	min-height: 110%
 
 .sm-main > .sm-show
   transform: translate(-100%, 0)
@@ -111,6 +107,13 @@ html.sm-desktop
 	    color: #FFF
 	    &::after
 	      color: white
+
+html.sm-touch
+	.sm-scroller
+		overflow: scroll
+		-webkit-overflow-scrolling: touch
+	.sm-content
+		min-height: 105%
 
 .sm-item-label
   position: relative
