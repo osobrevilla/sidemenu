@@ -27,6 +27,7 @@
 		root.jQuery.extend(root, factory(root.jQuery));
 	}
 }(this, function($) {
+	'use strict';
 	// Object.create Polyfill
 	if (!Object.create)
 		Object.create = (function() {
@@ -83,6 +84,24 @@
 
 	document.documentElement.className += _cls;
 
+
+	function SMMenuOverlay() {
+		this.$el = $('<div/>').addClass('sm-overlay');
+		this.el = this.$el.get(0);
+	}
+
+	$.extend(SMMenuOverlay.prototype, {
+		show: function() {
+			this.$el.appendTo(document.body);
+		},
+		hide: function() {
+			this.$el.detach();
+		},
+		destroy: function() {
+			this.$el.remove();
+		}
+	});
+
 	/**
 	 * Class represent a Menu element.
 	 * @class
@@ -116,6 +135,7 @@
 				.addClass('sm-title')
 				.text(this.title = this.options.title)
 			);
+
 		this.$list = $('<ul/>').appendTo(this.$content).get(0);
 		this.items = [];
 		this.addItems(items);
@@ -197,12 +217,14 @@
 		_openParents: function() {
 			this.sideMenu.history.clear();
 			var parentsMenus = [];
-			(function(parentItem) {
+
+			function open(parentItem) {
 				if (parentItem && parentItem.parent) {
 					parentsMenus.push(parentItem.parent);
-					arguments.callee(parentItem.parent.parentItem);
+					open(parentItem.parent.parentItem);
 				}
-			}(this.parentItem));
+			}
+			open(this.parentItem);
 			parentsMenus.reverse();
 			for (var i in parentsMenus) {
 				//parentNode.insertBefore(parentsMenus[i].el, this.el);
@@ -229,7 +251,8 @@
 		open: function() {
 			if (this.isOpen)
 				return this;
-			var currentMenu = this._getCurrentMenu();
+			var currentMenu = this._getCurrentMenu(),
+				overlay;
 			if (currentMenu)
 				currentMenu._hide();
 			this._show(function() {
@@ -242,6 +265,9 @@
 			if (this.options.onOpen) {
 				this.options.onOpen.call(this);
 			}
+			overlay = this.overlay || this.sideMenu && this.sideMenu.overlay;
+			if (overlay)
+				overlay.show();
 			return this;
 		},
 		/** @expose */
@@ -285,6 +311,8 @@
 		destroy: function() {
 			this.clear();
 			this.$el.remove();
+			if (this.overlay)
+				this.overlay.destroy();
 			if (this.parentItem) {
 				this.parentItem.items.splice(this.parentItem.items.indexOf(this), 1);
 			}
@@ -324,6 +352,12 @@
 				return this.stacks.length === 0;
 			}
 		};
+
+		if (this.options.overlay) {
+			this.overlay = new SMMenuOverlay();
+			this.overlay.$el.on(isTouch ? 'touchstart' : pressEvent, this.close.bind(this));
+		}
+
 		this._target = null;
 		this.sideMenu = this;
 		this.currentMenu = null;
@@ -335,15 +369,16 @@
 		/** @override*/
 		_add: function(menuItem, index) {
 			Menu.prototype._add.call(this, menuItem, index);
-			(function(subMenu) {
+			function walkItems(parent, subMenu) {
 				if (subMenu) {
-					subMenu.sideMenu = this;
+					subMenu.sideMenu = parent;
 					for (var i in subMenu.items) {
 						if (subMenu.items[i] instanceof SMSubMenuItem)
-							arguments.callee.call(this, subMenu.items[i].subMenu);
+							walkItems(parent, subMenu.items[i].subMenu);
 					}
 				}
-			}.call(this, menuItem.subMenu));
+			}
+			walkItems(this, menuItem.subMenu);
 		},
 		_refresh: function() {
 			if (this._target) this._target.append(
@@ -366,6 +401,8 @@
 			if (this.options.onClose) {
 				this.options.onClose.call(this);
 			}
+			if (this.overlay)
+				this.overlay.hide();
 		},
 		/** @expose */
 		toggle: function() {
@@ -562,8 +599,8 @@
 		this.id = id || null;
 		this.$el.addClass('sm-item-button');
 		this.$el.on(pressEvent, function(e) {
-			if (typeof callback === 'function')
-				callback.call(that, this);
+			if (typeof onPress === 'function')
+				onPress.call(that, this);
 		});
 	}
 

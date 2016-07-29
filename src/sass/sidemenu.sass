@@ -13,10 +13,19 @@
   top: 0
   height: 100%
   width: 260px
-  z-index: 1
+  z-index: 20
   backface-visibility: hidden
   transform: translate(100%, 0)
   transform: translate3d(100%, 0, 0)
+
+.sm-overlay
+	background: rgba(0,0,0,.7)
+	position: fixed
+	top: 0
+	left: 0
+	right: 0
+	bottom: 0
+	z-index: 10
 
 .sm-main-left
   right: auto
@@ -48,7 +57,7 @@
 .sm-main > .sm-show
   transform: translate(-100%, 0)
   transform: translate3d(-100%, 0, 0)
-  box-shadow: 0 0 11px #999
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.29)
   opacity: 1
 
 .sm-main-left
@@ -65,8 +74,6 @@
     transform: translate3d(100%, 0, 0)
 
 .sm-title
-  background: #73BE13
-  color: #FFF
   font-size: 2em
   font-weight: 300
   margin: 0
@@ -127,30 +134,31 @@ html.sm-touch
   text-shadow: 0 0 1px rgba(255, 255, 255, 0.1)
 
 .sm-back
-  cursor: pointer
-  box-shadow: inset 0 -1px rgba(0, 0, 0, 0.2)
-  transition: background .3s,box-shadow .3s
-  background: #3B8600
-  color: #FFF
-  display: block
-  font-size: 1.3em
-  font-weight: 700
-  letter-spacing: 1px
-  outline: 0
-  padding: 1em 1em 1em 2.5em
-  position: relative
-  text-transform: uppercase
-  &:hover
-    background: #4BAA00
-  &::after
-    display: block
-    position: absolute
-    content: "«"
-    left: 0
-    font-size: 2em
-    color: #FFF
-    top: 0
-    font-family: arial
-    font-weight: 100
-    line-height: 1
-    padding: 0.28em 0.5em
+	cursor: pointer
+	background: #FFF
+	color:#00b76f
+	display: block
+	font-size: 1.3em
+	font-weight: 700
+	letter-spacing: 1px
+	outline: 0
+	padding: 1em 1em 1em 2.5em
+	position: relative
+	text-transform: uppercase
+	&:hover
+		background: #00b76f
+		color: #FFF
+		&::after
+			color: white
+	&::after
+		color: #00b76f
+		display: block
+		position: absolute
+		content: "«"
+		left: 0
+		font-size: 2em
+		top: 0
+		font-family: arial
+		font-weight: 100
+		line-height: 1
+		padding: 0.28em 0.5em

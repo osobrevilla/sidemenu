@@ -1,34 +1,41 @@
 // DEMO PAGE
 
-html
-  font-family: sans-serif
-  text-size-adjust: 100%
-  background-color: #DDD
-
 body
-  font: 100%/1.5 Arial
+  text-size-adjust: 100%
+  background-color: #00b76f
+  font: 100%/1.5 sans-serif
   -webkit-font-smoothing: antialiased
   padding: 0
   margin: 0
 
-article
-  font-size: 80%
-  color: #333
+.page
+  font-size: 90%
+  color: #FFF
   padding: 2em 4em
 
-code
-  font-size: 130%
-
-section
+  code
+    font-size: 130%
   li
     margin: .25em 0
-
+  button
+    position: relative
+    z-index: 12
+    border: 0 none
+    border-radius: 2px
+    background: rgba(0,0,0,0.42)
+    color: white
+    padding: .5em
+    cursor: pointer
+    &:hover
+      color: white
+    &:disabled
+      background-color: transparent
 // NEXT CODE ONLY FOR DEMO EXAMPLE!
 // EXAMPLE! EXAMPLE! EXAMPLE! EXAMPLE! EXAMPLE! EXAMPLE! EXAMPLE!
 
 .sm-item-useraccount
-  background: #73BE13
-  color: #FFF
+  background: #00b76f
+  color: white
   font-size: 2em
   font-weight: 300
   margin: 0
