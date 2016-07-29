@@ -59,7 +59,7 @@
 		isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
 
 
-		pressEvent = $.event.special.tap ? 'tap' : 'click';
+		pressEvent = $.tap ? 'tap' : 'click';
 
 	var _cls = "";
 
