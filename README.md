@@ -7,7 +7,7 @@ JavaScript library to create side menus with full object oriented way and touch 
 
 ## How Use
 
-####1. Add the following files:
+### 1. Add the following files:
 
 ```html
  <link rel="stylesheet" type="text/css" href="dist/css/sidemenu.css" />
@@ -16,7 +16,7 @@ JavaScript library to create side menus with full object oriented way and touch 
  <script src="dist/js/sidemenu.js"></script>
 ```
 
-####2. Add content and wrapper for menu.
+### 2. Add content and wrapper for menu.
 The menu ("sm-main") will always adapt to its container.
 
 ```html
@@ -28,7 +28,7 @@ The menu ("sm-main") will always adapt to its container.
 ```
 > **NOTE:** Only for full height menu you need add "sm-wrapper" how first child of body. You can create or use your own custom wrapper with other dimensions or hierarchy but do not forget add ever overflow hidden and position absolute/fixed css style.
 
-####3. Built and add the menu
+### 3. Built and add the menu
 
 ```javascript
 // Creating the master menu (SideMenu)
@@ -121,7 +121,7 @@ new SideSubMenu([SMItem,..], options);
 	.getItemByName("Share");
 	.getSubMenuByName("Animals");
 ```
-###SMItem Class
+### SMItem Class
 
 Class that represent one empty list item. this class is template to create other type items.
 ```javascript
@@ -131,27 +131,27 @@ new SMItem();
 	.moveToPosition(index);
 	.remove();
 ```
-###SMLabelItem Class
+### SMLabelItem Class
 Extend from **SMItem** class, and represent one item with a text title and icon.
 
 ```javascript
 new SMLabelItem("title", "className");
 ```
 
-###SMSubMenuItem Class
+### SMSubMenuItem Class
 Extend from **SMLabelItem**, represent a single item with a submenu child.
 
 ```javascript
 new SMSubMenuItem("title", [SMItem,..], "className");
 ```
 
-###SMLinkItem Class
+### SMLinkItem Class
 Extend from **SMLabelItem**, represent a native link.
 ```javascript
 new SMLinkItem("title", "url", "_blank"., "className");
 ```
 
-###SMButtonItem Class
+### SMButtonItem Class
 
 Extend from **SMItem**, represent a action button item.
 
